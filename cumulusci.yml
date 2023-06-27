@@ -1,0 +1,28 @@
+minimum_cumulusci_version: '3.76.0'
+project:
+    name: FINS-Level-3-CommercialBanking
+    package:
+        name: FINS-Level-3-CommercialBanking
+        api_version: '55.0'
+    git:
+        default_branch: 'main'
+        prefix_feature: 'feature/'
+        prefix_beta: 'beta/'
+        prefix_release: 'release/'
+    source_format: sfdx
+
+tasks:
+    robot:
+        options:
+            suites: robot/FINS-Level-3-CommercialBanking/tests
+            options:
+                outputdir: robot/FINS-Level-3-CommercialBanking/results
+
+    robot_testdoc:
+        options:
+            path: robot/FINS-Level-3-CommercialBanking/tests
+            output: robot/FINS-Level-3-CommercialBanking/doc/FINS-Level-3-CommercialBanking_tests.html
+
+    run_tests:
+        options:
+            required_org_code_coverage_percent: 75
