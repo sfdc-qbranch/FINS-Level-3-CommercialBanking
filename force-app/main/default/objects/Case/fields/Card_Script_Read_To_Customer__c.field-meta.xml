@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Card_Script_Read_To_Customer__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Part of the RegE demo.</description>
+    <externalId>false</externalId>
+    <label>Card Script Read To Customer</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

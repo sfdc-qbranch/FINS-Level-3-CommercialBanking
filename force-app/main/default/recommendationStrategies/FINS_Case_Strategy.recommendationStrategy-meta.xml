@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecommendationStrategy xmlns="http://soap.sforce.com/2006/04/metadata">
+    <contextRecordType>Case</contextRecordType>
+    <description>Used in Lightning Service Console on Case records</description>
+    <filter>
+        <childNode>Load_Password_Reset_Rec</childNode>
+        <label>Case Reason Password Reset</label>
+        <name>Case_Reason_Password_Reset</name>
+        <expression>ISPICKVAL($Record.Reason, &apos;Password Reset&apos;)</expression>
+    </filter>
+    <filter>
+        <childNode>Load_Transaction_Review</childNode>
+        <label>Case Reason Fraud</label>
+        <name>Case_Reason_Fraud</name>
+        <expression>ISPICKVAL($Record.Reason, &apos;Fraud Concern&apos;)</expression>
+    </filter>
+    <label>FINS Case Strategy</label>
+    <recommendationLoad>
+        <label>Load Password Reset Rec</label>
+        <name>Load_Password_Reset_Rec</name>
+        <condition>
+            <field>Name</field>
+            <operator>EQUALS</operator>
+            <value>
+                <type>TEXT</type>
+                <value>Reset Self-Service Password</value>
+            </value>
+        </condition>
+        <conditionLogic>and</conditionLogic>
+        <object>Recommendation</object>
+    </recommendationLoad>
+    <recommendationLoad>
+        <label>Load Transaction Review</label>
+        <name>Load_Transaction_Review</name>
+        <condition>
+            <field>Name</field>
+            <operator>EQUALS</operator>
+            <value>
+                <type>TEXT</type>
+                <value>Transaction Review</value>
+            </value>
+        </condition>
+        <conditionLogic>and</conditionLogic>
+        <object>Recommendation</object>
+    </recommendationLoad>
+    <sort>
+        <childNode>Case_Reason_Password_Reset</childNode>
+        <childNode>Case_Reason_Fraud</childNode>
+        <label>Limit to 2 offers</label>
+        <name>Limit_to_2_offers</name>
+        <limit>2</limit>
+        <field>
+            <name>Name</name>
+            <nullsFirst>false</nullsFirst>
+            <order>Asc</order>
+        </field>
+    </sort>
+    <union>
+        <childNode>Limit_to_2_offers</childNode>
+        <label>Output</label>
+        <name>Output_3952c5d8adc34af6afad12f8241fee6a</name>
+    </union>
+</RecommendationStrategy>

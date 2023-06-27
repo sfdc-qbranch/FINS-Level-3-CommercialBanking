@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>FINS_CommercialBanking_MSA__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Master Services Agreement - FINS Commercial Banking Treasury Implementation use case</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Select this checkbox to use the client&apos;s existing Master Services Agreement or specify that the MSA has been completed for a new client.</inlineHelpText>
+    <label>Master Services Agreement Received</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

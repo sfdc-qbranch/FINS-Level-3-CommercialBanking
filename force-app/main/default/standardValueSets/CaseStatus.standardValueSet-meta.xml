@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sorted>false</sorted>
+    <standardValue>
+        <fullName>New</fullName>
+        <default>true</default>
+        <label>⭐️New</label>
+        <closed>false</closed>
+    </standardValue>
+    <standardValue>
+        <fullName>Investigating</fullName>
+        <default>false</default>
+        <label>Investigating</label>
+        <closed>false</closed>
+    </standardValue>
+    <standardValue>
+        <fullName>Response Received</fullName>
+        <default>false</default>
+        <label>Response Received</label>
+        <closed>false</closed>
+    </standardValue>
+    <standardValue>
+        <fullName>Attention</fullName>
+        <default>false</default>
+        <label>Attention</label>
+        <closed>false</closed>
+    </standardValue>
+    <standardValue>
+        <fullName>Warning</fullName>
+        <default>false</default>
+        <label>Warning</label>
+        <closed>false</closed>
+    </standardValue>
+    <standardValue>
+        <fullName>Working</fullName>
+        <default>false</default>
+        <label>⚙️Working</label>
+        <closed>false</closed>
+    </standardValue>
+    <standardValue>
+        <fullName>Escalated</fullName>
+        <default>false</default>
+        <label>🔺Escalated</label>
+        <closed>false</closed>
+    </standardValue>
+    <standardValue>
+        <fullName>On Hold</fullName>
+        <default>false</default>
+        <label>On Hold</label>
+        <closed>false</closed>
+    </standardValue>
+    <standardValue>
+        <fullName>Lost - on hold</fullName>
+        <default>false</default>
+        <label>Lost - on hold</label>
+        <closed>false</closed>
+    </standardValue>
+    <standardValue>
+        <fullName>Lost - blocked</fullName>
+        <default>false</default>
+        <label>Lost - blocked</label>
+        <closed>false</closed>
+    </standardValue>
+    <standardValue>
+        <fullName>Replacement ordered</fullName>
+        <default>false</default>
+        <label>Replacement ordered</label>
+        <closed>false</closed>
+    </standardValue>
+    <standardValue>
+        <fullName>Replacement dispatched</fullName>
+        <default>false</default>
+        <label>Replacement dispatched</label>
+        <closed>true</closed>
+    </standardValue>
+    <standardValue>
+        <fullName>Awaiting Customer Docs</fullName>
+        <default>false</default>
+        <label>Awaiting Customer Docs</label>
+        <closed>false</closed>
+    </standardValue>
+    <standardValue>
+        <fullName>Exception Handling</fullName>
+        <default>false</default>
+        <label>Exception Handling</label>
+        <closed>false</closed>
+    </standardValue>
+    <standardValue>
+        <fullName>Closed in Community</fullName>
+        <default>false</default>
+        <label>Closed in Community</label>
+        <closed>true</closed>
+    </standardValue>
+    <standardValue>
+        <fullName>FNOL</fullName>
+        <default>false</default>
+        <label>FNOL</label>
+        <closed>false</closed>
+    </standardValue>
+    <standardValue>
+        <fullName>Adjuster Assignment</fullName>
+        <default>false</default>
+        <label>Adjuster Assigned</label>
+        <closed>false</closed>
+    </standardValue>
+    <standardValue>
+        <fullName>Estimate Review</fullName>
+        <default>false</default>
+        <label>Estimate Review</label>
+        <closed>false</closed>
+    </standardValue>
+    <standardValue>
+        <fullName>Estimate Complete</fullName>
+        <default>false</default>
+        <label>Estimate Complete</label>
+        <closed>false</closed>
+    </standardValue>
+    <standardValue>
+        <fullName>Waiting on Customer</fullName>
+        <default>false</default>
+        <label>⏱Waiting on Customer</label>
+        <closed>false</closed>
+    </standardValue>
+    <standardValue>
+        <fullName>In Repair</fullName>
+        <default>false</default>
+        <label>In Repair</label>
+        <closed>false</closed>
+    </standardValue>
+    <standardValue>
+        <fullName>Client Info</fullName>
+        <default>false</default>
+        <label>Client Info</label>
+        <closed>false</closed>
+    </standardValue>
+    <standardValue>
+        <fullName>MSA</fullName>
+        <default>false</default>
+        <label>MSA</label>
+        <closed>false</closed>
+    </standardValue>
+    <standardValue>
+        <fullName>Contacts &amp; Roles</fullName>
+        <default>false</default>
+        <label>Contacts &amp; Roles</label>
+        <closed>false</closed>
+    </standardValue>
+    <standardValue>
+        <fullName>NAICS</fullName>
+        <default>false</default>
+        <label>NAICS</label>
+        <closed>false</closed>
+    </standardValue>
+    <standardValue>
+        <fullName>Authorization</fullName>
+        <default>false</default>
+        <label>Authorization</label>
+        <closed>false</closed>
+    </standardValue>
+    <standardValue>
+        <fullName>Internal Team Assignments</fullName>
+        <default>false</default>
+        <label>Internal Team Assignments</label>
+        <closed>false</closed>
+    </standardValue>
+    <standardValue>
+        <fullName>Base Services</fullName>
+        <default>false</default>
+        <label>Base Services</label>
+        <closed>false</closed>
+    </standardValue>
+    <standardValue>
+        <fullName>Add-ons</fullName>
+        <default>false</default>
+        <label>Add-ons</label>
+        <closed>false</closed>
+    </standardValue>
+    <standardValue>
+        <fullName>User Access &amp; Entitlements</fullName>
+        <default>false</default>
+        <label>User Access &amp; Entitlements</label>
+        <closed>false</closed>
+    </standardValue>
+    <standardValue>
+        <fullName>Assign Top Level Approver</fullName>
+        <default>false</default>
+        <label>Assign Top Level Approver</label>
+        <closed>false</closed>
+    </standardValue>
+    <standardValue>
+        <fullName>Review</fullName>
+        <default>false</default>
+        <label>Review</label>
+        <closed>false</closed>
+    </standardValue>
+    <standardValue>
+        <fullName>Provisional Credit</fullName>
+        <default>false</default>
+        <label>Provisional Credit</label>
+        <closed>false</closed>
+    </standardValue>
+    <standardValue>
+        <fullName>Research &amp; Investigation</fullName>
+        <default>false</default>
+        <label>Research &amp; Investigation</label>
+        <closed>false</closed>
+    </standardValue>
+    <standardValue>
+        <fullName>Pending Settlement Credit</fullName>
+        <default>false</default>
+        <label>Pending Settlement Credit</label>
+        <closed>false</closed>
+    </standardValue>
+    <standardValue>
+        <fullName>Closed</fullName>
+        <default>false</default>
+        <label>❎Closed</label>
+        <closed>true</closed>
+    </standardValue>
+</StandardValueSet>

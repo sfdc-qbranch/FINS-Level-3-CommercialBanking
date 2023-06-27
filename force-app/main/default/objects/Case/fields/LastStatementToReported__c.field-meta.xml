@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>LastStatementToReported__c</fullName>
+    <description>For RegE. The delta between the last statement date as of the investigation date, and the investigation date, in days.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>The delta between the last statement date as of the investigation date, and the investigation date, in days.</inlineHelpText>
+    <label>Last Statement to Reported (Days)</label>
+    <precision>3</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

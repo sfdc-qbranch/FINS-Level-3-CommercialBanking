@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>FINS_CommercialBanking_NextAppMeeting__c</fullName>
+    <defaultValue>(TODAY() + 30)</defaultValue>
+    <description>FINS Commercial Banking Treasury Management Implementation use case</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Date is pre-populated based on existing schedule.  This date can be manually changed.</inlineHelpText>
+    <label>Next Committee Approval Meeting</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Date</type>
+</CustomField>

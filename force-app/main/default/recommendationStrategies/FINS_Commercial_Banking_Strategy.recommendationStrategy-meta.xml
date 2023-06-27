@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecommendationStrategy xmlns="http://soap.sforce.com/2006/04/metadata">
+    <contextRecordType>Account</contextRecordType>
+    <description>Used in the Commercial Banking app for Person Accounts</description>
+    <label>FINS Commercial Banking Strategy</label>
+    <recommendationLoad>
+        <label>Cash Management Banking Services</label>
+        <name>Load_Annual_Account_Review</name>
+        <condition>
+            <field>Name</field>
+            <operator>EQUALS</operator>
+            <value>
+                <type>TEXT</type>
+                <value>Cash Management Banking Services</value>
+            </value>
+        </condition>
+        <conditionLogic>and</conditionLogic>
+        <object>Recommendation</object>
+    </recommendationLoad>
+    <recommendationLoad>
+        <label>Load Refinance Loan</label>
+        <name>Load_Refinance_Loan</name>
+        <condition>
+            <field>Name</field>
+            <operator>EQUALS</operator>
+            <value>
+                <type>TEXT</type>
+                <value>Refinance Loan</value>
+            </value>
+        </condition>
+        <conditionLogic>and</conditionLogic>
+        <object>Recommendation</object>
+    </recommendationLoad>
+    <sort>
+        <childNode>Load_Annual_Account_Review</childNode>
+        <childNode>Load_Refinance_Loan</childNode>
+        <label>Only show two</label>
+        <name>Only_show_two</name>
+        <limit>2</limit>
+        <field>
+            <name>Priority__c</name>
+            <nullsFirst>false</nullsFirst>
+            <order>Desc</order>
+        </field>
+    </sort>
+    <union>
+        <childNode>Only_show_two</childNode>
+        <label>Output</label>
+        <name>Output_c4347963170d4f3daf35d0681f3d2f2a</name>
+    </union>
+</RecommendationStrategy>

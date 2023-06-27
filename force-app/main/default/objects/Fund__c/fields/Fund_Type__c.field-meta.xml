@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Fund_Type__c</fullName>
+    <externalId>false</externalId>
+    <label>Fund Type</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Credit</fullName>
+                <default>false</default>
+                <label>Credit</label>
+            </value>
+            <value>
+                <fullName>Distressed</fullName>
+                <default>false</default>
+                <label>Distressed</label>
+            </value>
+            <value>
+                <fullName>Equity</fullName>
+                <default>false</default>
+                <label>Equity</label>
+            </value>
+            <value>
+                <fullName>Fund of Funds</fullName>
+                <default>false</default>
+                <label>Fund of Funds</label>
+            </value>
+            <value>
+                <fullName>Hedge</fullName>
+                <default>false</default>
+                <label>Hedge</label>
+            </value>
+            <value>
+                <fullName>Mutual</fullName>
+                <default>false</default>
+                <label>Mutual</label>
+            </value>
+            <value>
+                <fullName>Private Equity</fullName>
+                <default>false</default>
+                <label>Private Equity</label>
+            </value>
+            <value>
+                <fullName>Real Estate</fullName>
+                <default>false</default>
+                <label>Real Estate</label>
+            </value>
+            <value>
+                <fullName>Secondaries</fullName>
+                <default>false</default>
+                <label>Secondaries</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

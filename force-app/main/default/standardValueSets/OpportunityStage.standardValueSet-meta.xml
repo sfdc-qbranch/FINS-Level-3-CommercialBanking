@@ -1,0 +1,855 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sorted>false</sorted>
+    <standardValue>
+        <fullName>Prospect</fullName>
+        <default>false</default>
+        <label>Prospect</label>
+        <closed>false</closed>
+        <forecastCategory>Omitted</forecastCategory>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Prospecting</fullName>
+        <default>false</default>
+        <description>IDO Lending demo</description>
+        <label>Prospecting</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>10</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Pre-Approval</fullName>
+        <default>false</default>
+        <description>IDO Lending demo</description>
+        <label>Pre-Approval</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>10</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Inerested</fullName>
+        <default>false</default>
+        <description>FSC IDO</description>
+        <label>Inerested</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>15</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Submission</fullName>
+        <default>false</default>
+        <description>Submission of Insurance Policy for Quote and Approval</description>
+        <label>Submission</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>10</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Review</fullName>
+        <default>false</default>
+        <label>Review</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>15</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Underwrite</fullName>
+        <default>false</default>
+        <description>Insurance Stage where Policy is with Underwriter</description>
+        <label>Underwrite</label>
+        <closed>false</closed>
+        <forecastCategory>BestCase</forecastCategory>
+        <probability>50</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Qualification</fullName>
+        <color>#33CCFF</color>
+        <default>false</default>
+        <label>Qualification</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>20</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Proposal Issued</fullName>
+        <default>false</default>
+        <label>Proposal Issued</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>20</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Preparation</fullName>
+        <default>false</default>
+        <label>Preparation</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>20</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Discovery</fullName>
+        <color>#3366FF</color>
+        <default>false</default>
+        <label>Discovery</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>15</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Sales Pitch</fullName>
+        <default>false</default>
+        <label>Sales Pitch</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>35</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>KYC / AML</fullName>
+        <default>false</default>
+        <label>KYC / AML</label>
+        <closed>false</closed>
+        <forecastCategory>BestCase</forecastCategory>
+        <probability>50</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Loan Origination</fullName>
+        <color>#3366FF</color>
+        <default>false</default>
+        <label>Loan Origination</label>
+        <closed>false</closed>
+        <forecastCategory>BestCase</forecastCategory>
+        <probability>70</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Solicitation</fullName>
+        <default>false</default>
+        <label>Solicitation</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>20</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Assessment Needed</fullName>
+        <default>false</default>
+        <description>FSC Add-on</description>
+        <label>Assessment Needed</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>25</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Opportunity Identified</fullName>
+        <default>false</default>
+        <label>Opportunity Identified</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>25</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Underwriting Review</fullName>
+        <default>false</default>
+        <description>IDO Lending demo</description>
+        <label>Underwriting Review</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>30</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Decisioning</fullName>
+        <default>false</default>
+        <label>Decisioning</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>40</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Engaged</fullName>
+        <default>false</default>
+        <label>Engaged</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>30</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Needs Analysis</fullName>
+        <default>false</default>
+        <description>FSC IDO</description>
+        <label>Needs Analysis</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>35</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Develop Proposal</fullName>
+        <default>false</default>
+        <description>FSC Add-on</description>
+        <label>Develop Proposal</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>50</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Best Interest Requirements</fullName>
+        <default>false</default>
+        <label>Best Interest Requirements</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>60</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Consent</fullName>
+        <default>false</default>
+        <description>FSC IDO</description>
+        <label>Consent</label>
+        <closed>false</closed>
+        <forecastCategory>BestCase</forecastCategory>
+        <probability>50</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Deal Mandated</fullName>
+        <default>false</default>
+        <label>Deal Mandated</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>50</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Proposed/Quote</fullName>
+        <default>false</default>
+        <label>Proposed/Quote</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>50</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Quote/Illustration</fullName>
+        <default>false</default>
+        <description>Quote/Illustration for L&amp;A Insurance Opportunity</description>
+        <label>Quote/Illustration</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>50</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Application</fullName>
+        <default>false</default>
+        <label>Application</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>60</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>QDE</fullName>
+        <default>false</default>
+        <label>QDE</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>20</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>DDE</fullName>
+        <default>false</default>
+        <label>DDE</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>30</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Underwriting</fullName>
+        <color>#FFCC33</color>
+        <default>false</default>
+        <label>Underwriting</label>
+        <closed>false</closed>
+        <forecastCategory>Forecast</forecastCategory>
+        <probability>80</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Rate Negotiation</fullName>
+        <default>false</default>
+        <description>IDO Lending demo</description>
+        <label>Rate Negotiation</label>
+        <closed>false</closed>
+        <forecastCategory>BestCase</forecastCategory>
+        <probability>60</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Documentation</fullName>
+        <default>false</default>
+        <label>Documentation</label>
+        <closed>false</closed>
+        <forecastCategory>BestCase</forecastCategory>
+        <probability>60</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Client Presentation</fullName>
+        <default>false</default>
+        <description>FSC Add-on</description>
+        <label>Client Presentation</label>
+        <closed>false</closed>
+        <forecastCategory>BestCase</forecastCategory>
+        <probability>75</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Agreed</fullName>
+        <default>false</default>
+        <label>Agreed</label>
+        <closed>false</closed>
+        <forecastCategory>Forecast</forecastCategory>
+        <probability>75</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Processing Appointment</fullName>
+        <default>false</default>
+        <label>Processing Appointment</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>50</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Proposal Accepted</fullName>
+        <default>false</default>
+        <label>Proposal Accepted</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>75</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Decision Pending</fullName>
+        <default>false</default>
+        <label>Decision Pending</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>75</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Proposal/Quote</fullName>
+        <color>#000099</color>
+        <default>false</default>
+        <label>Proposal/Quote</label>
+        <closed>false</closed>
+        <forecastCategory>BestCase</forecastCategory>
+        <probability>75</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Closing/Funding</fullName>
+        <default>false</default>
+        <label>Closing/Funding</label>
+        <closed>false</closed>
+        <forecastCategory>Forecast</forecastCategory>
+        <probability>80</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Deal Execution</fullName>
+        <default>false</default>
+        <label>Deal Execution</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>80</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Commitments Issued</fullName>
+        <default>false</default>
+        <label>Commitments Issued</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>85</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Approval</fullName>
+        <default>false</default>
+        <description>IDO Lending demo</description>
+        <label>Approval</label>
+        <closed>false</closed>
+        <forecastCategory>BestCase</forecastCategory>
+        <probability>85</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Fulfilling</fullName>
+        <default>false</default>
+        <label>Fulfilling</label>
+        <closed>false</closed>
+        <forecastCategory>Forecast</forecastCategory>
+        <probability>90</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Booking</fullName>
+        <default>false</default>
+        <label>Booking</label>
+        <closed>false</closed>
+        <forecastCategory>Forecast</forecastCategory>
+        <probability>90</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Initiate Transfer</fullName>
+        <default>false</default>
+        <description>FSC Add-on</description>
+        <label>Initiate Transfer</label>
+        <closed>false</closed>
+        <forecastCategory>Forecast</forecastCategory>
+        <probability>90</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Negotiation</fullName>
+        <color>#000066</color>
+        <default>false</default>
+        <label>Negotiation</label>
+        <closed>false</closed>
+        <forecastCategory>Forecast</forecastCategory>
+        <probability>90</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Awaiting Funding</fullName>
+        <default>false</default>
+        <label>Awaiting Funding</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>100</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Funded / Booked</fullName>
+        <default>false</default>
+        <label>Funded / Booked</label>
+        <closed>false</closed>
+        <forecastCategory>Forecast</forecastCategory>
+        <probability>90</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Bound</fullName>
+        <default>false</default>
+        <description>Policy has been written and bound, Policy is still potential to be lost during cooling off period.</description>
+        <label>Bound</label>
+        <closed>false</closed>
+        <forecastCategory>Forecast</forecastCategory>
+        <probability>98</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Funded</fullName>
+        <default>false</default>
+        <description>IDO Lending demo</description>
+        <label>Funded</label>
+        <closed>true</closed>
+        <forecastCategory>Closed</forecastCategory>
+        <probability>100</probability>
+        <won>true</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Appointed</fullName>
+        <default>false</default>
+        <label>Appointed</label>
+        <closed>false</closed>
+        <forecastCategory>Forecast</forecastCategory>
+        <probability>90</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Onboarding</fullName>
+        <default>false</default>
+        <label>Onboarding</label>
+        <closed>false</closed>
+        <forecastCategory>Forecast</forecastCategory>
+        <probability>95</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>CM Approval</fullName>
+        <default>false</default>
+        <label>CM Approval</label>
+        <closed>false</closed>
+        <forecastCategory>Forecast</forecastCategory>
+        <probability>90</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Loan Account Creation</fullName>
+        <default>false</default>
+        <label>Loan Account Creation</label>
+        <closed>false</closed>
+        <forecastCategory>Forecast</forecastCategory>
+        <probability>90</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Customer Acceptance</fullName>
+        <default>false</default>
+        <label>Customer Acceptance</label>
+        <closed>false</closed>
+        <forecastCategory>Forecast</forecastCategory>
+        <probability>90</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Ready for Disbursement</fullName>
+        <default>false</default>
+        <label>Ready for Disbursement</label>
+        <closed>false</closed>
+        <forecastCategory>Forecast</forecastCategory>
+        <probability>90</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Disbursed</fullName>
+        <default>false</default>
+        <label>Disbursed</label>
+        <closed>true</closed>
+        <forecastCategory>Closed</forecastCategory>
+        <probability>100</probability>
+        <won>true</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Verification</fullName>
+        <default>false</default>
+        <label>Verification</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>50</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Account Creation</fullName>
+        <default>false</default>
+        <label>Account Creation</label>
+        <closed>false</closed>
+        <forecastCategory>BestCase</forecastCategory>
+        <probability>70</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Application Closed</fullName>
+        <default>false</default>
+        <label>Application Closed</label>
+        <closed>true</closed>
+        <forecastCategory>Closed</forecastCategory>
+        <probability>100</probability>
+        <won>true</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Application Discarded</fullName>
+        <default>false</default>
+        <label>Application Discarded</label>
+        <closed>true</closed>
+        <forecastCategory>Omitted</forecastCategory>
+        <probability>100</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Meet with Team</fullName>
+        <default>false</default>
+        <label>Meet with Team</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>15</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Material Review</fullName>
+        <default>false</default>
+        <label>Material Review</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>25</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Committee Approval</fullName>
+        <default>false</default>
+        <label>Committee Approval</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>40</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Write Up</fullName>
+        <default>false</default>
+        <label>Write Up</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>60</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Final Approval</fullName>
+        <default>false</default>
+        <label>Final Approval</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>90</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Marking Materials Sent</fullName>
+        <default>false</default>
+        <label>Marking Materials Sent</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>10</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Building Tour</fullName>
+        <default>false</default>
+        <label>Building Tour</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>20</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>RFP Received</fullName>
+        <default>false</default>
+        <label>RFP Received</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>30</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Proposal Sent</fullName>
+        <default>false</default>
+        <label>Proposal Sent</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>40</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>LDS</fullName>
+        <default>false</default>
+        <label>LDS</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>50</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Lease Negotiation</fullName>
+        <default>false</default>
+        <label>Lease Negotiation</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>60</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Deal Committee Approved</fullName>
+        <default>false</default>
+        <label>Deal Committee Approved</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>90</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Initial Due Diligence</fullName>
+        <default>false</default>
+        <description>Used in PE opportunities</description>
+        <label>Initial Due Diligence</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>35</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Legal Documents In</fullName>
+        <default>false</default>
+        <description>Used in PE opps</description>
+        <label>Legal Documents In</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>75</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>First Meeting</fullName>
+        <default>false</default>
+        <label>First Meeting</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>10</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Second Meeting</fullName>
+        <default>false</default>
+        <label>Second Meeting</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>25</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Term Sheet Issued</fullName>
+        <default>false</default>
+        <description>Used in PE opps</description>
+        <label>Term Sheet Issued</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>45</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Pitchbook</fullName>
+        <default>false</default>
+        <label>Pitchbook</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>65</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Subscription Doc</fullName>
+        <default>false</default>
+        <label>Subscription Doc</label>
+        <closed>false</closed>
+        <forecastCategory>Forecast</forecastCategory>
+        <probability>80</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>On-Hold</fullName>
+        <default>false</default>
+        <label>On-Hold</label>
+        <closed>false</closed>
+        <forecastCategory>Omitted</forecastCategory>
+        <probability>0</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Investor</fullName>
+        <default>false</default>
+        <label>Investor</label>
+        <closed>true</closed>
+        <forecastCategory>Closed</forecastCategory>
+        <probability>100</probability>
+        <won>true</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Committed</fullName>
+        <default>false</default>
+        <description>Used in PE opps</description>
+        <label>Committed</label>
+        <closed>true</closed>
+        <forecastCategory>Closed</forecastCategory>
+        <probability>100</probability>
+        <won>true</won>
+    </standardValue>
+    <standardValue>
+        <fullName>NDA</fullName>
+        <default>false</default>
+        <label>NDA</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>10</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>CIM Received</fullName>
+        <default>false</default>
+        <description>Used in Private equity opps</description>
+        <label>CIM Received</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>15</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>IOI</fullName>
+        <default>false</default>
+        <description>Used in PE opps</description>
+        <label>IOI</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>20</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>LOI</fullName>
+        <default>false</default>
+        <description>Used in PE opps</description>
+        <label>LOI</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>40</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Exclusivity</fullName>
+        <default>false</default>
+        <description>Used in PE opps</description>
+        <label>Exclusivity</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>70</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Closed Won</fullName>
+        <color>#78C953</color>
+        <default>false</default>
+        <label>Closed Won</label>
+        <closed>true</closed>
+        <forecastCategory>Closed</forecastCategory>
+        <probability>100</probability>
+        <won>true</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Closed Lost</fullName>
+        <color>#FF0000</color>
+        <default>false</default>
+        <label>Closed Lost</label>
+        <closed>true</closed>
+        <forecastCategory>Omitted</forecastCategory>
+        <probability>0</probability>
+        <won>false</won>
+    </standardValue>
+</StandardValueSet>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PathAssistant xmlns="http://soap.sforce.com/2006/04/metadata">
+    <active>true</active>
+    <entityName>Lead</entityName>
+    <fieldName>Status</fieldName>
+    <masterLabel>Commercial Lending Referral</masterLabel>
+    <pathAssistantSteps>
+        <info>&lt;p&gt;&lt;b&gt;Learn about and contact your new lead quickly.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Use Salesforce leads to record and follow up on customers&amp;#39; potential interest in our bank&amp;#39;s products and services.&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;Respond to your lead within five minutes to increase your chances of being able to successfully meet the customer&amp;#39;s need.&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Look at the customer profile to prepare yourself before contacting them.&lt;/li&gt;&lt;li&gt;Understand what we already know about their goals, life stage, financial situation.&lt;/li&gt;&lt;li&gt;Check their recent activity to see if they have been engaging with us.&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;</info>
+        <picklistValueName>New</picklistValueName>
+    </pathAssistantSteps>
+    <pathAssistantSteps>
+        <info>&lt;p&gt;&lt;b&gt;Keep in touch with the customer&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;Now that you know that the customer is interested in one of our products and you have confirmed the product is suitable, follow up regularly to ensure progress.&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Contact the customer regularly to check if they have any questions&lt;/li&gt;&lt;li&gt;Ensure the customer is enrolled for automatic lead-nurturing email campaigns&lt;/li&gt;&lt;/ul&gt;</info>
+        <picklistValueName>Nurturing - Contacted</picklistValueName>
+    </pathAssistantSteps>
+    <pathAssistantSteps>
+        <info>&lt;p&gt;&lt;b&gt;Verify contact information and qualify your lead.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;Gather as much contact information as you can. Get tips from the pros about the &lt;a href=&quot;https://www.salesforce.com/pardot/features/qualify-leads/&quot; target=&quot;_blank&quot; style=&quot;font-size: 13px;&quot;&gt;importance of qualifying your lead&lt;/a&gt;.&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Get your lead’s email address, phone number, and title so that you can include your lead in future campaigns.&lt;/li&gt;&lt;li&gt;Email your lead first, and immediately follow up with a phone call.&lt;/li&gt;&lt;li&gt;Rehearse your call scripts so that you sound confident and the flow of your conversation is more natural.&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;</info>
+        <picklistValueName>Working - Contacted</picklistValueName>
+    </pathAssistantSteps>
+    <recordTypeName>FINS_Commercial_Banking_Loan</recordTypeName>
+</PathAssistant>

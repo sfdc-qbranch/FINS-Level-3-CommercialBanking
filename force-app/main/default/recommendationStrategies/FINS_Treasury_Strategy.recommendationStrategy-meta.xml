@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecommendationStrategy xmlns="http://soap.sforce.com/2006/04/metadata">
+    <contextRecordType>Opportunity</contextRecordType>
+    <description>Used as part of the Treasury Management demo script to show NBA for opportunity.</description>
+    <label>FINS Treasury Strategy</label>
+    <recommendationLoad>
+        <label>LoadTMRecommendation</label>
+        <name>LoadTM</name>
+        <condition>
+            <field>Name</field>
+            <operator>CONTAINS</operator>
+            <value>
+                <type>TEXT</type>
+                <value>Treasury</value>
+            </value>
+        </condition>
+        <conditionLogic>and</conditionLogic>
+        <object>Recommendation</object>
+        <sortField>
+            <name>CreatedDate</name>
+            <nullsFirst>false</nullsFirst>
+            <order>Desc</order>
+        </sortField>
+    </recommendationLoad>
+    <union>
+        <childNode>LoadTM</childNode>
+        <label>Output</label>
+        <name>Output_4c6a981126e34bffb9869b6d5696feb0</name>
+    </union>
+</RecommendationStrategy>

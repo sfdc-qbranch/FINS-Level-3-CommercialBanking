@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>FINS_CommercialBanking_AdminPhone__c</fullName>
+    <description>FINS Commercial Banking Treasury Management Implementation use case</description>
+    <externalId>false</externalId>
+    <formula>FINS_CommercialBanking_AdminName__r.Phone</formula>
+    <inlineHelpText>Primary Contact Phone is pulled from the selected Primary Contact record.</inlineHelpText>
+    <label>Administrator Phone</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Retail</fullName>
+    <active>true</active>
+    <description>Retail Loan Applications</description>
+    <label>Retail</label>
+    <picklistValues>
+        <picklist>Application_Phase__c</picklist>
+        <values>
+            <fullName>Draft</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Submitted</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Loan_Ownership__c</picklist>
+        <values>
+            <fullName>Business</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Joint</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Single</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Occupancy_Type__c</picklist>
+        <values>
+            <fullName>Investment</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Primary Residence</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Second Residence</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Property_Type__c</picklist>
+        <values>
+            <fullName>Condo</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>House</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Land</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Multi-Family</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other Types</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Town House</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Purchase_or_Refinance__c</picklist>
+        <values>
+            <fullName>New Property</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Refinance</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Switching to Cumulus</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+</RecordType>

@@ -1,28 +1,456 @@
-minimum_cumulusci_version: '3.76.0'
+#  ____    ___      _
+# / __ \  / _ )____(_)_ __
+#/ /_/ / / _  / __/ /\ \ /
+#\___\_\/____/_/ /_//_\_\
+#
 project:
-    name: FINS-Level-3-CommercialBanking
-    package:
-        name: FINS-Level-3-CommercialBanking
-        api_version: '55.0'
-    git:
-        default_branch: 'main'
-        prefix_feature: 'feature/'
-        prefix_beta: 'beta/'
-        prefix_release: 'release/'
-    source_format: sfdx
+  #------------------------------------#
+  # QBRIX CONFIG                       #
+  #------------------------------------#
+  # Q Brix Name, API Version and Repo URL are all set here. Name and Package > Name should be the same.
+
+  name: QBrix-3-FINS-CommercialBanking
+  package:
+    name: QBrix-3-FINS-CommercialBanking
+    api_version: "57.0"
+  git:
+    default_branch: "main"
+    repo_url: https://github.com/sfdc-qbranch/QBrix-3-FINS-CommercialBanking
+  source_format: sfdx
+
+  #------------------------------------#
+  # QBRIX CUSTOM OPTIONS & SETTINGS    #
+  #------------------------------------#
+
+  custom:
+    # ADD YOUR DETAILS HERE FOR Q BRIX REGISTRATION
+    # It is recommended you run "Setup New Q Brix Project" from the VSCode Build Tasks to set these as it will also update other files
+    # Guidance: https://confluence.internal.salesforce.com/display/QNEXTGENDEMOS/Setup+Qbrix+Task
+    qbrix_owner_name: "Oswaldo Perez"
+    qbrix_owner_team: "Q NextGen"
+    qbrix_publisher_name: "Oswaldo Perez"
+    qbrix_publisher_team: "Q NextGen"
+    qbrix_documentation_url: https://confluence.internal.salesforce.com/pages/viewpage.action?pageId=487362018
+    qbrix_description: "Q Brix | Build | Commercial Banking"
+
+    #GLOBAL EXCLUSION LIST
+    #Used by retrieve_changes and list_changes builtin CCI tasks
+    exclude: &exclude-list
+      - FeatureParameter
+      - "AuraDefinition:"
+      - "SiteDotCom:"
+      - "ManagedTopics:"
+      - "LiveChatTranscript:"
+      - "ExperienceResource:"
+      - "AppMenu:"
+      - "Profile:"
+      - "FlowDefinition:"
+
+  #------------------------------------#
+  # QBRIX PACKAGE DEPENDENCIES         #
+  #------------------------------------#
+  # ADD MANAGED & UNMANAGED PACKAGE DEPENDENCIES HERE. OTHER CCI PROJECTS CAN ALSO BE LINKED PROVIDING THEY WORK WITH JUST A DEPLOY METHOD.
+  # Guidance: https://confluence.internal.salesforce.com/display/QNEXTGENDEMOS/Package+Install
+
+  dependencies:
+
+#--Add Project Sources here--
+sources:
+  #------------------------------------#
+  # QBRIX SOURCES                      #
+  #------------------------------------#
+  # Add Q Brix Sources here. These must be located on GitHub and be a CCI Project or Q Brix Project.
+  # Guidance: https://confluence.internal.salesforce.com/display/QNEXTGENDEMOS/QBrix+Dependencies
+
+  base:
+    github: https://github.com/sfdc-qbranch/QBrix-0-xDO-BaseConfig
+    
+  # Knowledge:
+  #   github: https://github.com/sfdc-qbranch/QBrix-1-xDO-Knowledge
+  
+  FINS_Base:
+    github: https://github.com/sfdc-qbranch/QBrix-1-FINS-Base #TODO: TEMPORARY FIX: Referenced here to remove an issue where FINS Banking Base is not downloading this FINS Base.
+
+  FINS_Banking_Base:
+    github: https://github.com/sfdc-qbranch/QBrix-1-FINS-Banking-Base
+  
+  FINS_Banking_CRMA:
+    github: https://github.com/sfdc-qbranch/QBrix-3-FINS-Banking-CRMA
 
 tasks:
-    robot:
-        options:
-            suites: robot/FINS-Level-3-CommercialBanking/tests
-            options:
-                outputdir: robot/FINS-Level-3-CommercialBanking/results
+  #------------------------------------#
+  # CCI TASK DEFAULTS                  #
+  #------------------------------------#
+  # Default configuration and overrides for builtin CCI Tasks
 
-    robot_testdoc:
-        options:
-            path: robot/FINS-Level-3-CommercialBanking/tests
-            output: robot/FINS-Level-3-CommercialBanking/doc/FINS-Level-3-CommercialBanking_tests.html
+  run_tests:
+    options:
+      required_org_code_coverage_percent: 75
 
-    run_tests:
+  load_dataset:
+    options:
+      ignore_row_errors: True
+      drop_missing_schema: True
+      set_recently_viewed: True
+
+  deploy:
+    options:
+      path: force-app
+
+  update_admin_profile:
+    options:
+      package_xml: files/package.xml
+      api_names:
+        - Admin
+
+  list_changes:
+    options:
+      exclude: *exclude-list
+
+  retrieve_changes:
+    options:
+      exclude: *exclude-list
+
+  #------------------------------------#
+  # Q BRIX TASKS                       #
+  #------------------------------------#
+  # CUSTOM TASKS ADDED FOR Q BRIX DEVELOPMENT
+
+  qbrix_shell_deploy_metadeploy:
+    class_path: qbrix.tools.utils.qbrix_deploy.Deploy
+
+  abort_install:
+    class_path: qbrix.tools.utils.qbrix_orgconfig_hydrate.NGAbort
+
+  qbrix_cache_add:
+    class_path: qbrix.tools.utils.qbrix_orgconfig_hydrate.NGCacheAdd
+
+  deploy_dx:
+    class_path: qbrix.tools.utils.qbrix_orgconfig_hydrate.NGSFDXWrapper
+    options:
+      command: project deploy start --source-dir force-app/main/default --ignore-conflicts
+
+  qbrix_sfdx:
+    class_path: cumulusci.tasks.sfdx.SFDXOrgTask
+
+  flow_wrapper:
+    class_path: qbrix.tools.utils.qbrix_deploy.Deploy
+
+  dustpan:
+    class_path: qbrix.tools.utils.qbrix_orgconfig_hydrate.NGBroom
+
+  qbrix_metadata_checker:
+    class_path: qbrix.tools.utils.qbrix_metadata_checker.MetadataChecker
+
+  qbrix_installer_tracking:
+    class_path: qbrix.tools.utils.qbrix_installtracking.InstallRecorder
+
+  qbrix_landing:
+    class_path: qbrix.tools.utils.qbrix_landing.RunLanding
+
+  qbrix_preflight:
+    class_path: qbrix.tools.utils.qbrix_preflight.RunPreflight
+
+  health_check:
+    class_path: qbrix.tools.utils.qbrix_health_check.HealthChecker
+
+  update_qbrix:
+    class_path: qbrix.tools.utils.qbrix_update.QBrixUpdater
+
+  setup_qbrix:
+    class_path: qbrix.tools.utils.qbrix_project_setup.InitProject
+
+  list_qbrix:
+    class_path: qbrix.salesforce.qbrix_salesforce_tasks.ListQBrix
+
+  q_update_dependencies:
+    class_path: qbrix.salesforce.qbrix_salesforce_tasks.QUpdateDependencies
+
+  mass_qbrix_update:
+    class_path: qbrix.tools.utils.qbrix_mass_ops.MassFileOps
+
+  qbrix_installed:
+    class_path: qbrix.salesforce.qbrix_salesforce_tasks.QBrixInstalled
+
+  orgconfig_hydrate:
+    description: injects additional context into the orgconfig that can be referenced downstream
+    class_path: qbrix.tools.utils.qbrix_orgconfig_hydrate.NGOrgConfig
+
+  deploy_settings:
+    description: Checks that Settings have been defined in force-app and deploys them if present
+    class_path: cumulusci.tasks.salesforce.Deploy
+    options:
+      path: force-app/main/default/settings
+
+  check_register:
+    class_path: qbrix.salesforce.qbrix_salesforce_tasks.QUpdateDependencies
+    options:
+      dependencies:
+        - github: https://github.com/sfdc-qbranch/QBrix-1-xDO-Tool-QBrixRegister
+
+  spin_request:
+    description: generate a spin
+    class_path: qbrix.tools.utils.qbrix_org_generator.Spin
+
+  analytics_manager:
+    class_path: qbrix.tools.data.qbrix_analytics.AnalyticsManager
+
+  user_manager:
+    class_path: qbrix.salesforce.qbrix_salesforce_tasks.CreateUser
+
+  omniscript_align:
+    class_path: qbrix.tools.utils.qbrix_chiro.OmniscriptAlign
+
+  validate_qbrix:
+    description: Validates the qbrix
+    class_path: cumulusci.tasks.robotframework.Robot
+    options:
+      suites: qbrix_local/robot/tests/validate.robot
+      vars: browser:headlesschrome
+      test: Validate Qbrix
+      options:
+        report: None
+        log: None
+        output: None
+
+  #------------------------------------#
+  # DATA TOOL INTEGRATION              #
+  #------------------------------------#
+  # Note: This section can be removed if you are not using the NextGen Data Tool
+  # Guide: https://confluence.internal.salesforce.com/display/QNEXTGENDEMOS/NextGen+Data+Tool
+
+  deploy_nextgen_data:
+    class_path: qbrix.tools.utils.qbrix_nextgen_datatool.RunDataTool
+
+    options:
+      data_keys:
+        - 6ed994d6-5ead-41f6-aeda-771e81f26efa
+  #------------------------------------#
+  # TESTIM INTEGRATION                 #
+  #------------------------------------#
+  # Note: This section can be removed if you are not using Testim.
+  # Guide: https://confluence.internal.salesforce.com/display/QNEXTGENDEMOS/Testim-via+CCI+Task
+
+  qbrix_task_Testim:
+    class_path: qbrix.tools.testing.qbrix_testim.RunTestim
+
+  #------------------------------------#
+  # CUSTOM TASKS                       #
+  #------------------------------------#
+  # Add Your Custom Tasks here
+
+flows:
+  #------------------------------------#
+  # STAGE 1 of 3: PRE-QBRIX DEPLOYMENT #
+  #------------------------------------#
+
+  # Prepares the Org with any required settings/testim scripts
+  prepare_org:
+    steps:
+      1:
+        #inject in additional methods for when clause filtering.
+        task: orgconfig_hydrate
+      2:
+        # Deploys settings folder and checks q brix registration package
+        task: qbrix_preflight
+      3:
+        # Dependencies are set in the QBRIX PACKAGE DEPENDENCIES area above.
+        task: update_dependencies
+        ui_options:
+          name: Installs/Updates Q Brix Dependencies
+
+  # Add steps here to deploy q brix added to the sources area above
+  source_dependencies:
+    steps:
+      2:
+        flow: FINS_Banking_Base:deploy_qbrix
+      # 3:
+      #   flow: Knowledge:deploy_qbrix
+
+
+  #------------------------------------#
+  # STAGE 2 of 3: Q BRIX DEPLOYMENT    #
+  #------------------------------------#
+  #DEFAULT INSTALL FLOWS ARE DEFINED HERE. "deploy_qbrix" and "deploy_qbrix_min" SHOULD ALWAYS BE DEFINED
+
+  # Deploys the q brix
+  deploy_qbrix:
+    steps:
+      1:
+        task: qbrix_installer_tracking
+      2:
+        flow: dependencies
+      3:
+        task: deploy
+        ui_options:
+          name: Deploying Q Brix Metadata
+      4:
+        flow: post_qbrix_deploy
+      5:
+        task: qbrix_installer_tracking
         options:
-            required_org_code_coverage_percent: 75
+          explicitexit: True
+  
+  # Deploys the q brix without banking base, should be called by lv5 qbrix
+  deploy_qbrix_without_dependencies:
+    steps:
+      1:
+        task: qbrix_installer_tracking
+      2:
+        flow: prepare_org
+      3:
+        task: deploy
+        ui_options:
+          name: Deploying Q Brix Metadata
+      4:
+        flow: post_qbrix_deploy
+      5:
+        task: qbrix_installer_tracking
+        options:
+          explicitexit: True
+
+  # Deploys the q brix into a TSO or Production Org
+  deploy_qbrix_tso:
+    steps:
+      1:
+        flow: deploy_qbrix
+
+  #-------------------------------------------------#
+  # STAGE 3 of 3 (OPTIONAL) POST-QBRIX DEPLOYMENT   #
+  #-------------------------------------------------#
+  # ADD POST DEPLOYMENT STEPS HERE
+
+  post_qbrix_deploy:
+    steps:
+      1:
+        task: qbrix_landing
+      2:
+        # Placeholder task, replace this with your custom steps
+        flow: deploy_qbrix_data
+      3:
+        task: deploy_post
+      4:
+        # Placeholder task, replace this with your custom steps
+        task: assign_permission_sets
+        options:
+          api_names:
+            - Commercial_Banking_Service_Excellence_Internal
+            - FINS_Commercial_Banking_Service_Excellence
+            - FINS_Commercial_Banking_Sales
+            - Commercial_Banking_Treasury_Management_Internal
+            - FINS_Treasury_Management
+      5:
+        task: util_sleep
+        options:
+          seconds: 30
+        ui_options:
+          name: Waiting for exclusive access to permission set assignment
+
+  #------------------------------------#
+  # QBRIX TEST VALIDATION              #
+  #------------------------------------#
+  # Add steps here to validate your org deployment through testing (for example with Testim or Q Robot)
+
+  validate_qbrix:
+    steps:
+      1:
+        task: validate_qbrix
+
+  #------------------------------------#
+  # QBRIX DATA                         #
+  #------------------------------------#
+  #DEFINE DATA GENERATION FLOWS AND TASKS HERE
+
+  deploy_qbrix_data:
+    steps:
+      1:
+        # Placeholder task, replace this with your custom steps
+        task: None
+        #task: deploy_nextgen_data
+
+  #------------------------------------#
+  # QBRIX LEGACY FLOWS AND DEFAULTS    #
+  #------------------------------------#
+  #
+  # NOTE: These flows should not need to be modified and allow for legacy integration and default overrides.
+  #
+
+  # Deploys just the contents of this q brix with any essential dependencies
+  deploy_qbrix_min:
+    steps:
+      1:
+        flow: deploy_qbrix
+
+  # Legacy flow to redirect to the new flow for deploying data.
+  generate_qbrix_data:
+    steps:
+      1:
+        flow: deploy_qbrix_data
+
+  # Default Override of cci task
+  deploy_unmanaged_ee:
+    steps:
+      6:
+        task: None
+
+  # Default Override of cci task
+  deploy_unmanaged:
+    steps:
+      4:
+        task: None
+
+  dependencies:
+    steps:
+      1:
+        flow: prepare_org
+      2:
+        flow: source_dependencies
+
+  config_dev:
+    steps:
+      3:
+        flow: post_qbrix_deploy
+
+  config_qa:
+    steps:
+      3:
+        flow: post_qbrix_deploy
+
+orgs:
+  #------------------------------------#
+  # SCRATCH ORG CONFIG                 #
+  #------------------------------------#
+  #DEFAULT SETTINGS FOR SCRATCH ORGS. PREVIEW ORGS ARE DESIGNED TO LOAD ON NA135 WHICH IS AN R0 INSTANCE
+
+  scratch:
+    dev:
+      config_file: orgs/dev.json
+      days: 30
+      namespaced: false
+    dev_preview:
+      config_file: orgs/dev_preview.json
+      days: 30
+      namespaced: false
+    qa:
+      config_file: orgs/dev.json
+      days: 30
+      namespaced: false
+    qa_preview:
+      config_file: orgs/dev_preview.json
+      days: 30
+      namespaced: false
+
+plans:
+  #------------------------------------#
+  # METADEPLOY CONFIG                  #
+  #------------------------------------#
+  # DEFINE DEPLOY PLANS HERE FOR USE WITH METADEPLOY
+
+  deploy_q_brix_plan:
+    slug: deployqbrix
+    title: Deploy Q Brix
+    tier: primary
+    is_listed: True
+    steps:
+      1:
+        flow: deploy_qbrix_tso

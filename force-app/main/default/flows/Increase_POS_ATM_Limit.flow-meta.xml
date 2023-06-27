@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>49.0</apiVersion>
+    <choices>
+        <name>Checking_10023456</name>
+        <choiceText>Checking - 10023456</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Checking - 10023456</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>CreditCard58419954</name>
+        <choiceText>Credit Card - 58419954</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Credit Card - 58419954</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Savings_42848198</name>
+        <choiceText>Savings - 42848198</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Savings - 42848198</stringValue>
+        </value>
+    </choices>
+    <description>Designed to use with retail banking scenarios where call centers get a lot of calls about changing the POS/ATM withdrawal limits. Intended to run from Action List or Action within Service Console but could also be used in Communities if needed. Use this to initiate discussion with bank about how to cut down on average handle time. Does not depend or update any Salesforce data.</description>
+    <interviewLabel>Increase POS-ATM Limit {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Increase POS-ATM Limit</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>Flow</processType>
+    <screens>
+        <name>AccountInputScreen</name>
+        <label>AccountInputScreen</label>
+        <locationX>180</locationX>
+        <locationY>104</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>IncreaseInputForm</targetReference>
+        </connector>
+        <fields>
+            <name>fhouwesd</name>
+            <fieldText>Which account would you like to increase the ATM/POS limit on?</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>Account</name>
+            <choiceReferences>Savings_42848198</choiceReferences>
+            <choiceReferences>Checking_10023456</choiceReferences>
+            <choiceReferences>CreditCard58419954</choiceReferences>
+            <dataType>String</dataType>
+            <defaultSelectedChoiceReference>Checking_10023456</defaultSelectedChoiceReference>
+            <fieldText>Account</fieldText>
+            <fieldType>RadioButtons</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>ConfirmationInputForm</name>
+        <label>ConfirmationInputForm</label>
+        <locationX>622</locationX>
+        <locationY>105</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>grefr</name>
+            <fieldText>Account: {!Account}
+The old limit was: $500
+Once approved the new limit is {!New_Limit}</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>IncreaseInputForm</name>
+        <label>IncreaseInputForm</label>
+        <locationX>414</locationX>
+        <locationY>102</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>ConfirmationInputForm</targetReference>
+        </connector>
+        <fields>
+            <name>gerc</name>
+            <fieldText>Your current limit is: $500
+
+What would you like the limit increased to?</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>New_Limit</name>
+            <dataType>Currency</dataType>
+            <defaultValue>
+                <numberValue>1000.0</numberValue>
+            </defaultValue>
+            <fieldText>New Limit</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+            <scale>0</scale>
+            <validationRule>
+                <errorMessage>You need to enter a limit higher than $500</errorMessage>
+                <formulaExpression>{!New_Limit} &gt; 500</formulaExpression>
+            </validationRule>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <startElementReference>AccountInputScreen</startElementReference>
+    <status>Active</status>
+</Flow>

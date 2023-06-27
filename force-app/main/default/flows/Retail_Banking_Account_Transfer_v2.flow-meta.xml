@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>49.0</apiVersion>
+    <constants>
+        <name>test</name>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>&lt;img src=&quot;https://sdodemo-main-16109844f55-163-165100562d8.force.com/cumulusbanking/resource/surveyimg&quot; style=&quot;height:90px;width:200px;&quot;/&gt;</stringValue>
+        </value>
+    </constants>
+    <interviewLabel>Retail Banking Account Transfer v2 {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Retail Banking Account Transfer</label>
+    <processType>Flow</processType>
+    <screens>
+        <name>AccountTransferComplete</name>
+        <label>AccountTransferComplete</label>
+        <locationX>327</locationX>
+        <locationY>323</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>true</allowPause>
+        <connector>
+            <targetReference>HELLOC</targetReference>
+        </connector>
+        <fields>
+            <name>TransferComplete</name>
+            <extensionName>c:AccountTransfer</extensionName>
+            <fieldType>ComponentInstance</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>false</showHeader>
+    </screens>
+    <screens>
+        <name>AccountTransferScreen3</name>
+        <label>AccountTransferScreen3</label>
+        <locationX>328</locationX>
+        <locationY>200</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>true</allowPause>
+        <connector>
+            <targetReference>AccountTransferComplete</targetReference>
+        </connector>
+        <fields>
+            <name>Amount</name>
+            <dataType>Currency</dataType>
+            <defaultValue>
+                <numberValue>5000.0</numberValue>
+            </defaultValue>
+            <fieldText>Amount</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+            <scale>2</scale>
+        </fields>
+        <fields>
+            <name>Transfer_Date</name>
+            <dataType>Date</dataType>
+            <defaultValue>
+                <elementReference>$Flow.CurrentDate</elementReference>
+            </defaultValue>
+            <fieldText>Transfer Date</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>Reason_for_Transfer_Optional</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>Home Improvement</stringValue>
+            </defaultValue>
+            <fieldText>Reason for Transfer (Optional)</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Disclosure</name>
+            <fieldText>Transfers scheduled after 11 PM ET or on non-business days between Cumulus accounts are processed the next business day.</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>HELLOC</name>
+        <label>HELLOC</label>
+        <locationX>339</locationX>
+        <locationY>418</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>true</allowPause>
+        <fields>
+            <name>heloc</name>
+            <extensionName>c:helloc</extensionName>
+            <fieldType>ComponentInstance</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>survey</name>
+            <fieldText>&lt;DIV ALIGN=&quot;LEFT&quot;&gt;&lt;FONT FACE=&quot;Arial&quot; STYLE=&quot;font-size:12px&quot; COLOR=&quot;#000000&quot; LETTERSPACING=&quot;0&quot; KERNING=&quot;0&quot;&gt;&lt;A HREF=&quot;https://sdodemo-main-16109844f55-163-165100562d8.force.com/cumulusbanking/survey/runtimeApp.app?invitationId=0KiB00000008d3g&amp;surveyName=customer_satisfaction_survey_for_df&amp;UUID=fcd97def-47bf-4f6c-929a-04ba618f394e&quot; TARGET=&quot;_blank&quot;&gt;{!test}&lt;/A&gt;&lt;/FONT&gt;&lt;/DIV&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Schedule_Transfer</name>
+        <label>Schedule Transfer</label>
+        <locationX>328</locationX>
+        <locationY>74</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>true</allowPause>
+        <connector>
+            <targetReference>AccountTransferScreen3</targetReference>
+        </connector>
+        <fields>
+            <name>Transfer_From</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>Savings Account ****5769</stringValue>
+            </defaultValue>
+            <fieldText>Transfer From</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Transfer_To</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>Checking Account ****8293</stringValue>
+            </defaultValue>
+            <fieldText>Transfer To</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <startElementReference>Schedule_Transfer</startElementReference>
+    <status>Active</status>
+</Flow>

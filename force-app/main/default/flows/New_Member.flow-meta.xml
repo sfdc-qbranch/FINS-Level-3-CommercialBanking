@@ -1,0 +1,674 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>49.0</apiVersion>
+    <choices>
+        <name>Checking</name>
+        <choiceText>Checking</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Checking</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Drivers_License</name>
+        <choiceText>Drivers License</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Drivers License</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Full_Time</name>
+        <choiceText>Full-Time</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Full-Time</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Home</name>
+        <choiceText>Home</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Home</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>I_don_t_meet_any_of_these_criteria</name>
+        <choiceText>I don&apos;t meet any of these criteria</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>I don&apos;t meet any of these criteria</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>I_have_family_living_or_working_in_Wash</name>
+        <choiceText>I have family living or working in Washington State or the Oregon community of Clackamas, Marion, Multnomah or Washington counties</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>I have family living or working in Washington State or the Oregon community of Clackamas, Marion, Multnomah or Washington counties</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>I_live_in_Washington_State_or_the_Oregon_com</name>
+        <choiceText>I live in Washington State or the Oregon community of Clackamas, Marion, Multnomah or Washington counties</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>I live in Washington State or the Oregon community of Clackamas, Marion, Multnomah or Washington counties</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>I_m_a_contractor_for_a_partner_company</name>
+        <choiceText>I&apos;m a contractor for a partner company</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>I&apos;m a contractor for a partner company</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>I_m_a_member_of_a_partner_club_or_Association</name>
+        <choiceText>I&apos;m a member of a partner club or Association</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>I&apos;m a member of a partner club or Association</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>I_m_a_student_of_XYC_Technical_College</name>
+        <choiceText>I&apos;m a student of XYC Technical College</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>I&apos;m a student of XYC Technical College</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>I_m_an_employee_of_a_partner_company</name>
+        <choiceText>I&apos;m an employee of a partner company</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>I&apos;m an employee of a partner company</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>I_m_an_employee_of_the_State_of_Oregon</name>
+        <choiceText>I&apos;m an employee of the State of Oregon</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>I&apos;m an employee of the State of Oregon</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>I_work_in_Washington_State_or_the_Ore</name>
+        <choiceText>I work in Washington State or the Oregon community of Clackamas, Marion, Multnomah or Washington counties</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>I work in Washington State or the Oregon community of Clackamas, Marion, Multnomah or Washington counties</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>I_work_or_live_in_Oregon</name>
+        <choiceText>I work or live in Oregon</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>I work or live in Oregon</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Mobile</name>
+        <choiceText>Mobile</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Mobile</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>My_family_or_household_member_is_a_current_Columbia_Credit_Union_member</name>
+        <choiceText>My family or household member is a current Columbia Credit Union member</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>My family or household member is a current Columbia Credit Union member</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Non_Resident_Alien</name>
+        <choiceText>Non-Resident Alien</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Non-Resident Alien</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Not_Employed</name>
+        <choiceText>Not Employed</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Not Employed</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Part_Time</name>
+        <choiceText>Part-Time</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Part-Time</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Passport</name>
+        <choiceText>Passport</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Passport</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Resident_Alien</name>
+        <choiceText>Resident Alien</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Resident Alien</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Retired</name>
+        <choiceText>Retired</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Retired</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Savings</name>
+        <choiceText>Savings</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Savings</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Self_Employed</name>
+        <choiceText>Self-Employed</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Self-Employed</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>State_ID</name>
+        <choiceText>State ID</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>State ID</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>US_Citizen</name>
+        <choiceText>US Citizen</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>US Citizen</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Work</name>
+        <choiceText>Work</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Work</stringValue>
+        </value>
+    </choices>
+    <description>Displays various screens of information related to a new member application for a credit union. Does not update any Salesforce information and is intended to run from the service console but could also be used in Community.</description>
+    <interviewLabel>New Credit Union Member {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>New Credit Union Member</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>Flow</processType>
+    <screens>
+        <name>Account_Funding_Input</name>
+        <label>Account Funding Input</label>
+        <locationX>381</locationX>
+        <locationY>64</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Confirmation</targetReference>
+        </connector>
+        <fields>
+            <name>Bank_or_Financial_Institution_Name</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>Bank of America</stringValue>
+            </defaultValue>
+            <fieldText>Bank or Financial Institution Name</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Routing_Number</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>125000024</stringValue>
+            </defaultValue>
+            <fieldText>Routing Number</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Account_Number</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>7648756748</stringValue>
+            </defaultValue>
+            <fieldText>Account Number</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Account_Type</name>
+            <choiceReferences>Checking</choiceReferences>
+            <choiceReferences>Savings</choiceReferences>
+            <dataType>String</dataType>
+            <defaultSelectedChoiceReference>Checking</defaultSelectedChoiceReference>
+            <fieldText>Account Type</fieldText>
+            <fieldType>RadioButtons</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Amount</name>
+            <dataType>Currency</dataType>
+            <defaultValue>
+                <numberValue>5000.0</numberValue>
+            </defaultValue>
+            <fieldText>Amount</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+            <scale>0</scale>
+        </fields>
+        <fields>
+            <name>AuthorizationDisplay</name>
+            <fieldText>I hereby authorize Cumulus Credit Union (CCU) to initiate an ACH Debit entry from my account indicated above at the institution named above. If necessary, I authorize debit entries and adjustment for any debit entry presented in error on my account. This authorization is valid for a one-time entry. If the date of the transaction is not a business day, all activity will occur on the next business day. If the automatic transfer is returned for any reason, including non-sufficient funds, CCU may assess a fee. CCU has the right to terminate this authorization agreement for any reason.</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>I_Agree</name>
+            <dataType>Boolean</dataType>
+            <defaultValue>
+                <booleanValue>true</booleanValue>
+            </defaultValue>
+            <fieldText>I Agree</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Address_Information_Input</name>
+        <label>Address Information Input</label>
+        <locationX>186</locationX>
+        <locationY>222</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Employment_Information</targetReference>
+        </connector>
+        <fields>
+            <name>Street</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>123 Main St, unit 212</stringValue>
+            </defaultValue>
+            <fieldText>Street</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>City</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>Springfield</stringValue>
+            </defaultValue>
+            <fieldText>City</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>State</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>IL</stringValue>
+            </defaultValue>
+            <fieldText>State</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Zip_Code</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>94555</stringValue>
+            </defaultValue>
+            <fieldText>Zip Code</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Country</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>USA</stringValue>
+            </defaultValue>
+            <fieldText>Country</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Confirmation</name>
+        <label>Confirmation</label>
+        <locationX>567</locationX>
+        <locationY>61</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>ConfirmationDisplay</name>
+            <fieldText>The information has been submitted. Your application is now in review by the Credit Union. Somebody will get back to you within 48 hours.
+
+A copy of what was entered was sent to {!Primary_Email}.
+
+Thank you and have a great day!</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Employment_Information</name>
+        <label>Employment Information</label>
+        <locationX>183</locationX>
+        <locationY>341</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Membership_Qualification</targetReference>
+        </connector>
+        <fields>
+            <name>Employment_Status</name>
+            <choiceReferences>Full_Time</choiceReferences>
+            <choiceReferences>Part_Time</choiceReferences>
+            <choiceReferences>Self_Employed</choiceReferences>
+            <choiceReferences>Retired</choiceReferences>
+            <choiceReferences>Not_Employed</choiceReferences>
+            <dataType>String</dataType>
+            <defaultSelectedChoiceReference>Full_Time</defaultSelectedChoiceReference>
+            <fieldText>Employment Status</fieldText>
+            <fieldType>RadioButtons</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Employer_Name</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>Johnson Enterprises</stringValue>
+            </defaultValue>
+            <fieldText>Employer Name</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Occupation</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>Truck Driver</stringValue>
+            </defaultValue>
+            <fieldText>Occupation</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Identity_Information_Screen</name>
+        <label>Identity Information Screen</label>
+        <locationX>378</locationX>
+        <locationY>215</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Account_Funding_Input</targetReference>
+        </connector>
+        <fields>
+            <name>ResidenceStatus</name>
+            <choiceReferences>US_Citizen</choiceReferences>
+            <choiceReferences>Resident_Alien</choiceReferences>
+            <choiceReferences>Non_Resident_Alien</choiceReferences>
+            <dataType>String</dataType>
+            <defaultSelectedChoiceReference>US_Citizen</defaultSelectedChoiceReference>
+            <fieldText>What is your residence Status?</fieldText>
+            <fieldType>RadioButtons</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>What_type_of_identification_will_you_be_using</name>
+            <choiceReferences>Passport</choiceReferences>
+            <choiceReferences>State_ID</choiceReferences>
+            <choiceReferences>Drivers_License</choiceReferences>
+            <dataType>String</dataType>
+            <defaultSelectedChoiceReference>Passport</defaultSelectedChoiceReference>
+            <fieldText>What type of identification will you be using?</fieldText>
+            <fieldType>DropdownBox</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Document_Number</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>7983782</stringValue>
+            </defaultValue>
+            <fieldText>Document Number</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Issued_by</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>US Government</stringValue>
+            </defaultValue>
+            <fieldText>Issued by</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Issue_Date</name>
+            <dataType>Date</dataType>
+            <defaultValue>
+                <dateValue>2017-03-01</dateValue>
+            </defaultValue>
+            <fieldText>Issue Date</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Expiration_Date</name>
+            <dataType>Date</dataType>
+            <defaultValue>
+                <dateValue>2022-03-01</dateValue>
+            </defaultValue>
+            <fieldText>Expiration Date</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Membership_Qualification</name>
+        <label>Membership Qualification</label>
+        <locationX>382</locationX>
+        <locationY>337</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Identity_Information_Screen</targetReference>
+        </connector>
+        <fields>
+            <name>MembershipIntro</name>
+            <fieldText>Columbia Credit Union is a member-owned, not-for-profit financial organization, which means we share our profits with our members in the form of better rates and services.
+
+Please select how you qualify for membership:</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>Reason</name>
+            <choiceReferences>I_live_in_Washington_State_or_the_Oregon_com</choiceReferences>
+            <choiceReferences>I_work_in_Washington_State_or_the_Ore</choiceReferences>
+            <choiceReferences>I_have_family_living_or_working_in_Wash</choiceReferences>
+            <dataType>String</dataType>
+            <fieldText>Reason</fieldText>
+            <fieldType>RadioButtons</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Personal_Information_Screen</name>
+        <label>Personal Information Screen</label>
+        <locationX>180</locationX>
+        <locationY>74</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Address_Information_Input</targetReference>
+        </connector>
+        <fields>
+            <name>First_Name</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>Peter</stringValue>
+            </defaultValue>
+            <fieldText>First Name</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Middle_Name</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>Charles</stringValue>
+            </defaultValue>
+            <fieldText>Middle Name</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Last_Name</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>Jackson</stringValue>
+            </defaultValue>
+            <fieldText>Last Name</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Placeholder1</name>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>Birthdate</name>
+            <dataType>Date</dataType>
+            <defaultValue>
+                <dateValue>1976-01-20</dateValue>
+            </defaultValue>
+            <fieldText>Birthdate</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Social_Security_Number</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>526-73-8390</stringValue>
+            </defaultValue>
+            <fieldText>Social Security Number</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Placeholder2</name>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>Primary_Email</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>pjackson@example.com</stringValue>
+            </defaultValue>
+            <fieldText>Primary Email</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Primary_Phone</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>(555) 123-4567</stringValue>
+            </defaultValue>
+            <fieldText>Primary Phone</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Phone_Type</name>
+            <choiceReferences>Home</choiceReferences>
+            <choiceReferences>Work</choiceReferences>
+            <choiceReferences>Mobile</choiceReferences>
+            <dataType>String</dataType>
+            <defaultSelectedChoiceReference>Mobile</defaultSelectedChoiceReference>
+            <fieldText>Phone Type</fieldText>
+            <fieldType>RadioButtons</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <startElementReference>Personal_Information_Screen</startElementReference>
+    <status>Active</status>
+    <variables>
+        <name>IdentificationID</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>NotSureWhatThisisusedfor</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>yTextCollectionVariable</name>
+        <dataType>String</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+</Flow>

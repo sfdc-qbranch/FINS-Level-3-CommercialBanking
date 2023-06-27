@@ -1,0 +1,503 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>49.0</apiVersion>
+    <choices>
+        <name>Annuities_I_Purchased_a_Symetra_annuity_contract</name>
+        <choiceText>Annuities: I Purchased a Symetra annuity contract</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Annuity</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Annuities_I_purchases_a_Symetra_annuity_contract</name>
+        <choiceText>Annuities: I purchases a Symetra annuity contract</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Annuities</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>CA</name>
+        <choiceText>CA</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>CA</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Fixed_Deferred_Annuities</name>
+        <choiceText>Fixed Deferred Annuities</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Fixed Deferred Annuities</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>IL</name>
+        <choiceText>IL</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>IL</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>IL2</name>
+        <choiceText>IL</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>IL</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Income_Annuities</name>
+        <choiceText>Income Annuities</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Income Annuities</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Life_Insurance_I_purchaes_a_Symetra_life_insurance_policy</name>
+        <choiceText>Life Insurance: I purchaes a Symetra life insurance policy</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Life Insurance</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Life_Insurance_I_purchased_a_Symetra_life_insurance_polic</name>
+        <choiceText>Life Insurance: I purchased a Symetra life insurance policy</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>LifeInsurance</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Mail_a_check_to_my_address_of_record</name>
+        <choiceText>Mail a check to my address of record.</choiceText>
+        <dataType>String</dataType>
+    </choices>
+    <choices>
+        <name>Mail_a_check_to_the_alternate_address_shown_below</name>
+        <choiceText>Mail a check to the alternate address shown below</choiceText>
+        <dataType>String</dataType>
+    </choices>
+    <choices>
+        <name>NY</name>
+        <choiceText>NY</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>NY</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Retirement_Plans_I_have_a_Symetra_IRA_401_k_403_b_or_457_plan</name>
+        <choiceText>Retirement Plans: I have a Symetra IRA, 401(k), 403(b) or 457 plan</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>RetirementPlan</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>TX</name>
+        <choiceText>TX</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>TX</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Variable_Deferred_Annuities</name>
+        <choiceText>Variable Deferred Annuities</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Variable Deferred Annuities</stringValue>
+        </value>
+    </choices>
+    <description>Used in Insurance situations where customer wants to drive self-service around annuity withdrawals. Intended to run from Communities. Does not update or depend on any Salesforce data.</description>
+    <interviewLabel>Annuity Withdrawal {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Annuity Withdrawal</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>Flow</processType>
+    <screens>
+        <name>C_Account_Info</name>
+        <label>C Account Info</label>
+        <locationX>428</locationX>
+        <locationY>63</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>D_Tax_Withholding</targetReference>
+        </connector>
+        <fields>
+            <name>jsxfvnhcs</name>
+            <fieldText>Please specify which account you would like to withdraw from and the amount or percentage.</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>Account</name>
+            <dataType>String</dataType>
+            <fieldText>Account</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>or2</name>
+            <dataType>String</dataType>
+            <fieldText>$ or %</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>More_Accounts</name>
+            <dataType>Boolean</dataType>
+            <fieldText>More Accounts</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Customer_Certification</name>
+        <label>Customer Certification</label>
+        <locationX>609</locationX>
+        <locationY>232</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>true</allowPause>
+        <fields>
+            <name>mknhbgfvcdxsfg</name>
+            <fieldText>I direct Cumulus Bank or Cumulus Insurance Life Insurance Company of New York to make distributions from my contract based on the information I have provided. I am aware of the Required Minimum Distribution rules, and I acknowledge that Cumulus and its affiliates are not responsible for ensuring that I have complied with these rules. I am aware distributions may impact added rider benefits and could reduce future benefits under the rider. I certify that the above information is accurate, and I will notify Symetra or First Symetra of any changes. I agree to hold harmless Cumulus or First Cumulus and its affiliates for any claims, expenses or taxes (including penalties and interest) incurred due to distributions made in accordance with this form.
+
+Under penalties of perjury, I certify that the number shown on this form is my correct Social Security or Tax Identification Number, I am a U.S. citizen or other U.S. person, and I am not subject to backup withholding due to failure to report all interest or dividends.</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>Check_this_box_if_you_h</name>
+            <dataType>Boolean</dataType>
+            <fieldText>Check this box if you have received a notification from the IRS that you are subject to backup withholding.</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>Check_this_box_if_you_are_claiming_Non_U</name>
+            <dataType>Boolean</dataType>
+            <fieldText>Check this box if you are claiming Non-U.S. status and submitting an appropriate withholding certificate (usually asigned IRS Form W-8 or IRS Form 8233) instead of agreeing to this certification</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>D_Tax_Withholding</name>
+        <label>D Tax Withholding</label>
+        <locationX>427</locationX>
+        <locationY>222</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>F_Payment_Instructions</targetReference>
+        </connector>
+        <fields>
+            <name>tgbtdfaerscds</name>
+            <fieldText>Please indicate below if this request satisfies your automated RMD payment specific to this annuity contract.</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>I_elect_to_waive_my_automated_RMD_pa</name>
+            <dataType>Boolean</dataType>
+            <fieldText>I elect to waive my automated RMD payment. I understand that my automated RMD payment will not be paid out fromthis annuity contract this year.</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>F_Payment_Instructions</name>
+        <label>F Payment Instructions</label>
+        <locationX>609</locationX>
+        <locationY>68</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Customer_Certification</targetReference>
+        </connector>
+        <fields>
+            <name>Payment_Instructions</name>
+            <choiceReferences>Mail_a_check_to_my_address_of_record</choiceReferences>
+            <choiceReferences>Mail_a_check_to_the_alternate_address_shown_below</choiceReferences>
+            <dataType>String</dataType>
+            <fieldText>Payment Instructions</fieldText>
+            <fieldType>RadioButtons</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Institution_Name</name>
+            <dataType>String</dataType>
+            <fieldText>Institution Name</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Inst_Address</name>
+            <dataType>String</dataType>
+            <fieldText>Address</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Inst_City</name>
+            <dataType>String</dataType>
+            <fieldText>City</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Inst_State</name>
+            <choiceReferences>IL2</choiceReferences>
+            <dataType>String</dataType>
+            <defaultSelectedChoiceReference>IL2</defaultSelectedChoiceReference>
+            <fieldText>State</fieldText>
+            <fieldType>DropdownBox</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Inst_Zip</name>
+            <dataType>String</dataType>
+            <fieldText>Zip</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Information_Review</name>
+        <label>Information Review</label>
+        <locationX>50</locationX>
+        <locationY>221</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Owner_Information_Input</targetReference>
+        </connector>
+        <fields>
+            <name>vfdcds</name>
+            <fieldText>Before we continue please make sure to review all the information in this knowledge document</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>thnnhg</name>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>ecdvfd</name>
+            <fieldText>&lt;A HREF=&quot;https://sdodemo-main-16190c1a558-163db78808e.force.com/policyholder/s/article/Information-related-to-IRA-or-NA-Withdrawals&quot; TARGET=&quot;_blank&quot;&gt;    LINK: &lt;/A&gt;&lt;FONT COLOR=&quot;#0000FF&quot;&gt;&lt;A HREF=&quot;https://sdodemo-main-16190c1a558-163db78808e.force.com/policyholder/s/article/Information-related-to-IRA-or-NA-Withdrawals&quot; TARGET=&quot;_blank&quot;&gt;&lt;U&gt;DOCUMENT RELATED TO WITHDRAWALS&lt;/U&gt;&lt;/A&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>nhgnhgdfhdf</name>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>rfasdc</name>
+            <fieldText>Once you have reviewed the information please click below to certify that you have read and understand the information presented.</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>bhjbjh</name>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>I_agree_that_I_have_read_the_information_in_the_linked_document_above</name>
+            <dataType>Boolean</dataType>
+            <fieldText>I agree that I have read the information in the linked document above</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+            <validationRule>
+                <errorMessage>You will need to agree before we can continue</errorMessage>
+                <formulaExpression>{!I_agree_that_I_have_read_the_information_in_the_linked_document_above} = True</formulaExpression>
+            </validationRule>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Owner_Information_Input</name>
+        <label>Owner Information Input</label>
+        <locationX>242</locationX>
+        <locationY>61</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Withdrawal_Options</targetReference>
+        </connector>
+        <fields>
+            <name>Contract_Number</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>798489</stringValue>
+            </defaultValue>
+            <fieldText>Contract Number</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>Primary_Phone_Number</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>415 371 7777</stringValue>
+            </defaultValue>
+            <fieldText>Primary Phone Number</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Email_Address</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>radams@example.com</stringValue>
+            </defaultValue>
+            <fieldText>Email Address</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Owner_Name</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>Rachel Adams</stringValue>
+            </defaultValue>
+            <fieldText>Owner Name</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>Account_Number</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>123-456-789</stringValue>
+            </defaultValue>
+            <fieldText>Account Number</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>Social_Security_Number</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>555-19-2984</stringValue>
+            </defaultValue>
+            <fieldText>Social Security Number</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>Address</name>
+            <defaultValue>
+                <stringValue>2160 N Paulina
+Chicago, IL 60647
+United States</stringValue>
+            </defaultValue>
+            <fieldText>Address</fieldText>
+            <fieldType>LargeTextArea</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Withdrawal_Options</name>
+        <label>B Withdrawal Options</label>
+        <locationX>242</locationX>
+        <locationY>219</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>C_Account_Info</targetReference>
+        </connector>
+        <fields>
+            <name>gervrf</name>
+            <fieldText>Option 1 -  My annuity is in the surrender period; please send me the maximum penalty-free amount available</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>My_annuity_is_in_the_surrender_period_please_send_me_the_maximum</name>
+            <dataType>Boolean</dataType>
+            <fieldText>Select Option 1</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>idsvfgt</name>
+            <fieldText>Option 2 - Send me the amount below (net) total after any taxes (section E) and surrender charges (if applicable) are deducted.*</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>Select_Option_2</name>
+            <dataType>Boolean</dataType>
+            <fieldText>Select Option 2</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>Amount</name>
+            <dataType>Currency</dataType>
+            <fieldText>Amount</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+            <scale>2</scale>
+        </fields>
+        <fields>
+            <name>fredssxjijl</name>
+            <fieldText>Option 3 - Withdraw this amout (gross) total from my annuity contract, and send me the remaining amount after any taxes (section E) and surrender charges (if applicable) are deducted.*</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>Select_Option_3</name>
+            <dataType>Boolean</dataType>
+            <fieldText>Select Option 3</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>Amount3</name>
+            <dataType>Currency</dataType>
+            <fieldText>Amount3</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+            <scale>0</scale>
+        </fields>
+        <fields>
+            <name>gefdsfgv</name>
+            <fieldText>Option 4 - Withdraw the entire amount of from my annuity contract. I have reviewed my contract and understand that surrender charges may apply and this will terminate my contract.</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>Select_Option_4</name>
+            <dataType>Boolean</dataType>
+            <fieldText>Select Option 4</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <startElementReference>Information_Review</startElementReference>
+    <status>Active</status>
+</Flow>

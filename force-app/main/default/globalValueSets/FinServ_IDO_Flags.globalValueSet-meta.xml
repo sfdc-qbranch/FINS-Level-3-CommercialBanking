@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>Maps 236</fullName>
+        <default>false</default>
+        <label>Maps 236</label>
+    </customValue>
+    <description>Set of demo tabs used in multi-select picklists to mark records used by specific demos</description>
+    <masterLabel>IDO Flags</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>

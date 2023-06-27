@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Platinum_Capital_Calls</fullName>
+    <columns>NAME</columns>
+    <columns>Investor__c</columns>
+    <columns>Amount__c</columns>
+    <columns>Due_Date__c</columns>
+    <columns>Fund__c</columns>
+    <filterScope>Mine</filterScope>
+    <label>Platinum Capital Calls</label>
+</ListView>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PathAssistant xmlns="http://soap.sforce.com/2006/04/metadata">
+    <active>true</active>
+    <entityName>Case</entityName>
+    <fieldName>Status</fieldName>
+    <masterLabel>Commercial Banking - Treasury Parent</masterLabel>
+    <pathAssistantSteps>
+        <fieldNames>FINS_CommercialBanking_CertCorpRes__c</fieldNames>
+        <fieldNames>FINS_CommercialBanking_CertAuth__c</fieldNames>
+        <info>&lt;p&gt;Please select Client&amp;#39;s Preferred Authorization Method and it will be automated to client.  This is required for Legal, Compliance and Audit, and can slow down deployment for our clients.&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;If client cannot accept DocuSign, see this reference &lt;a href=&quot;&quot; target=&quot;_blank&quot;&gt;guide&lt;/a&gt; for Fax and email processes.&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;Ensure appropriate Certificates and Documents are captured in the related Attachments on this Case!&lt;/p&gt;</info>
+        <picklistValueName>Authorization</picklistValueName>
+    </pathAssistantSteps>
+    <pathAssistantSteps>
+        <fieldNames>FINS_CommercialBanking_Client_Status__c</fieldNames>
+        <fieldNames>AccountId</fieldNames>
+        <info>&lt;p&gt;&lt;b&gt;&lt;u&gt;Client Status&lt;/u&gt;&lt;/b&gt;:&lt;/p&gt;&lt;p&gt;-Existing - This should apply to the majority of use cases (Established Relationships)&lt;/p&gt;&lt;p&gt;-New - This should be leveraged when new operating units, subsidiaries or partnerships are in play (Additional Workflows Required)&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;&lt;u&gt;Account Name&lt;/u&gt;&lt;/b&gt;:&lt;/p&gt;&lt;p&gt;Please Leverage Lookups from the Company Record as that is also the Legal Entity of Record&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;Confirm Articles of Incorporation in your relevant &lt;a href=&quot;https://www.llcuniversity.com/50-secretary-of-state-sos-business-entity-search/&quot; target=&quot;_blank&quot;&gt;state&lt;/a&gt;:&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://www.sos.alabama.gov/&quot; target=&quot;_blank&quot; style=&quot;font-size: 16px; font-family: Poppins;&quot;&gt;Alabama Secretary of State&lt;/a&gt;&lt;span style=&quot;font-size: 16px; font-family: Poppins;&quot;&gt;&lt;span class=&quot;ql-cursor&quot;&gt;﻿&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;</info>
+        <picklistValueName>Client Info</picklistValueName>
+    </pathAssistantSteps>
+    <pathAssistantSteps>
+        <fieldNames>ContactId</fieldNames>
+        <fieldNames>ContactPhone</fieldNames>
+        <fieldNames>ContactEmail</fieldNames>
+        <fieldNames>FINS_CommercialBanking_AdminName__c</fieldNames>
+        <fieldNames>FINS_CommercialBanking_TechContact__c</fieldNames>
+        <info>&lt;p&gt;&lt;b&gt;Contact&lt;/b&gt; is typically the Business Owner or Senior Executive of the Entity. Additionally typically the Authorized approver for Services.&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;Administrator&lt;/b&gt; is usually the Contact in SMB, but for larger entities is typically the CFO, Treasurer, Office Manager or Book Keepers/Accountant.&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;Technical&lt;/b&gt; Contact - These can be more technically savvy employees that may set up and maintain equipment/software etc. and access is limited to initial setup, then restricted unless needed through approvals later.&lt;/p&gt;</info>
+        <picklistValueName>Contacts &amp; Roles</picklistValueName>
+    </pathAssistantSteps>
+    <pathAssistantSteps>
+        <fieldNames>FINS_CommercialBanking_RelManager__c</fieldNames>
+        <fieldNames>FINS_CommercialBanking_TreasMgmtRep__c</fieldNames>
+        <fieldNames>FINS_CommercialBanking_TreasMgmtOps__c</fieldNames>
+        <fieldNames>FINS_Treasury_Management_Admin__c</fieldNames>
+        <fieldNames>FINS_CommercialBanking_NextAppMeeting__c</fieldNames>
+        <info>&lt;p&gt;Child Cases will be automatically assigned to appropriate case queues.  Additionally, in times of high volume Case Teams will be assigned automatically.&lt;/p&gt;</info>
+        <picklistValueName>Internal Team Assignments</picklistValueName>
+    </pathAssistantSteps>
+    <pathAssistantSteps>
+        <fieldNames>FINS_CommercialBanking_PrepoulateMSA__c</fieldNames>
+        <fieldNames>FINS_CommercialBanking_MSA__c</fieldNames>
+        <fieldNames>FINS_Commercial_Banking_TaxID__c</fieldNames>
+        <fieldNames>FINS_CommercialBanking_PhysAddress__c</fieldNames>
+        <fieldNames>FINS_CommercialBanking_MailAddress__c</fieldNames>
+        <info>&lt;p&gt;Pre-Population from Existing MSA is Quick, but &lt;strong&gt;PLEASE DO YOUR PART FOR FRAUD&lt;/strong&gt; and &lt;strong&gt;CONFIRM&lt;/strong&gt; Correct Tax ID and No Address variants!&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;Need a Refresher on Fraud Prevention? Just in Time Learning via &lt;a href=&quot;https://trailhead.salesforce.com/&quot; target=&quot;_blank&quot;&gt;Trailhead&lt;/a&gt;.&lt;/p&gt;</info>
+        <picklistValueName>MSA</picklistValueName>
+    </pathAssistantSteps>
+    <pathAssistantSteps>
+        <fieldNames>FINS_CommercialBanking_NAICS1__c</fieldNames>
+        <fieldNames>FINS_CommercialBanking_NAICS2__c</fieldNames>
+        <info>&lt;p&gt;Please confirm proper NAICS codes are utilized. These codes play a critical role in our Credit &amp;amp; Risk Rating Models as well as the appropriate fee structures for your client!!&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;Please Leverage this &lt;a href=&quot;https://www.naics.com/search/#naics&quot; target=&quot;_blank&quot;&gt;tool&lt;/a&gt; to look up NAICS or confirm Assigned NAICS for your Client. &lt;/p&gt;</info>
+        <picklistValueName>NAICS</picklistValueName>
+    </pathAssistantSteps>
+    <recordTypeName>FINS_Commercial_Banking_Treasury_Management_Parent</recordTypeName>
+</PathAssistant>

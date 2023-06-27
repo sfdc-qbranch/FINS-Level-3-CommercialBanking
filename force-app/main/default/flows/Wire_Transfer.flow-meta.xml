@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>49.0</apiVersion>
+    <description>This flow guides through various screens of information related to a wire transfer process. It does not update or read any Salesforce data. Intended to run in Agent console but could be used in Communities as well.</description>
+    <interviewLabel>Wire Transfer {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Wire Transfer</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>Flow</processType>
+    <screens>
+        <name>Account_Holder_Information_Input</name>
+        <label>Account Holder Information Input</label>
+        <locationX>180</locationX>
+        <locationY>152</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Distribution_Instructions</targetReference>
+        </connector>
+        <fields>
+            <name>frre</name>
+            <fieldText>1. Account Holder Information</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>Account_Holder_Information</name>
+            <dataType>String</dataType>
+            <fieldText>Account Holder Information</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Social_Security_number</name>
+            <dataType>String</dataType>
+            <fieldText>Social Security number</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Distribution_Frequency_Input</name>
+        <label>Distribution Frequency Input</label>
+        <locationX>579</locationX>
+        <locationY>151</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Tax_Withholding_Input</targetReference>
+        </connector>
+        <fields>
+            <name>gerveabadv</name>
+            <fieldText>3. Distribution Frequency</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>On_Demand_Distribution_Instructions</name>
+            <dataType>Boolean</dataType>
+            <fieldText>On Demand Distribution Instructions</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>revafv</name>
+            <fieldText>-----------------------------------------------------------------</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>One_Time_Distribution</name>
+            <dataType>Boolean</dataType>
+            <fieldText>One Time Distribution</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>Amount</name>
+            <dataType>Currency</dataType>
+            <fieldText>Amount</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+            <scale>0</scale>
+        </fields>
+        <fields>
+            <name>All_Cash_in_the_Account</name>
+            <dataType>Boolean</dataType>
+            <fieldText>All Cash in the Account</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>All_Securities_in_the_Account</name>
+            <dataType>Boolean</dataType>
+            <fieldText>All Securities in the Account</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>Specific_Securities</name>
+            <dataType>Boolean</dataType>
+            <fieldText>Specific Securities</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>Securities_Details</name>
+            <fieldText>Securities Details</fieldText>
+            <fieldType>LargeTextArea</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Distribution_Instructions</name>
+        <label>Distribution Instructions</label>
+        <locationX>384</locationX>
+        <locationY>152</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Distribution_Frequency_Input</targetReference>
+        </connector>
+        <fields>
+            <name>freafd</name>
+            <fieldText>2. Distribution Instructions</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>Journal_Assets_to_Account_Number</name>
+            <dataType>String</dataType>
+            <fieldText>Journal Assets to Account Number</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Specify_Relationship_to_Account_Holder_if_to_a_Third_Party</name>
+            <fieldText>Specify Relationship to Account Holder if to a Third Party</fieldText>
+            <fieldType>LargeTextArea</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Signature_Input</name>
+        <label>Signature Input</label>
+        <locationX>953</locationX>
+        <locationY>152</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>gerfcfrevsrfds</name>
+            <fieldText>I certify that the information provided on this form is true and accurate and I (we) authorize this transaction. I (We) hereby agree to indemnify and hold Cumulus Bank, N.A. harmless from and against any loss, claim, damage, or liability arising out of or resulting from any action taken by Cumulus Bank in reliance upon instructions provided under this Wire Transfer Authorization that Cumulus Bank in good faith believes to be genuine.</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>Certification</name>
+            <dataType>Boolean</dataType>
+            <fieldText>Certification</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Tax_Withholding_Input</name>
+        <label>Tax Withholding Input</label>
+        <locationX>766</locationX>
+        <locationY>151</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Signature_Input</targetReference>
+        </connector>
+        <fields>
+            <name>btvfrcdfdzxc</name>
+            <fieldText>4. Tax Withholding</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>gerfvtrsefrsc</name>
+            <fieldText>Federal Taxes</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>Do_not_withhold_any_federal_income_taxes</name>
+            <dataType>Boolean</dataType>
+            <fieldText>Do not withhold any federal income taxes</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>Withhold_the_following_amount</name>
+            <dataType>Currency</dataType>
+            <fieldText>Withhold the following amount</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+            <scale>0</scale>
+        </fields>
+        <fields>
+            <name>Withhold_the_following_percentage</name>
+            <dataType>Number</dataType>
+            <fieldText>Withhold the following percentage</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+            <scale>0</scale>
+        </fields>
+        <fields>
+            <name>brgfdsxds</name>
+            <fieldText>State Taxes</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>Do_not_withhold_any_state_income_tax</name>
+            <dataType>Boolean</dataType>
+            <fieldText>Do not withhold any state income tax</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>Withhold_the_following_amount_state</name>
+            <dataType>Currency</dataType>
+            <fieldText>Withhold the following amount</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+            <scale>0</scale>
+        </fields>
+        <fields>
+            <name>Withhold_the_following_percentage_state</name>
+            <dataType>Number</dataType>
+            <fieldText>Withhold the following percentage</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+            <scale>0</scale>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <startElementReference>Account_Holder_Information_Input</startElementReference>
+    <status>Active</status>
+</Flow>

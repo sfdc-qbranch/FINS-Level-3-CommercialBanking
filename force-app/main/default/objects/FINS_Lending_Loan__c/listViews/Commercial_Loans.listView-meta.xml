@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Commercial_Loans</fullName>
+    <columns>NAME</columns>
+    <columns>Stage__c</columns>
+    <columns>Amount_Requested__c</columns>
+    <columns>Loan_officer__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Product_Type__c</field>
+        <operation>equals</operation>
+        <value>Non-Real Estate Loan</value>
+    </filters>
+    <label>Commercial Loans</label>
+</ListView>

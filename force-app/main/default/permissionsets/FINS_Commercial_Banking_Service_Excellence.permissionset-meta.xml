@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <applicationVisibilities>
+        <application>FINS_Commercial_Banking_Service</application>
+        <visible>true</visible>
+    </applicationVisibilities>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>Commercial Banking - Service Excellence</label>
+    <license>Salesforce</license>
+    <recordTypeVisibilities>
+        <recordType>Account.FINS_Entity</recordType>
+        <visible>true</visible>
+    </recordTypeVisibilities>
+</PermissionSet>

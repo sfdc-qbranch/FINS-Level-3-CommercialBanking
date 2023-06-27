@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Purchase_or_Refinance__c</fullName>
+    <externalId>false</externalId>
+    <label>Purchase or Refinance</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>New Property</fullName>
+                <default>false</default>
+                <label>New Property</label>
+            </value>
+            <value>
+                <fullName>Refinance</fullName>
+                <default>false</default>
+                <label>Refinance</label>
+            </value>
+            <value>
+                <fullName>Switching to Cumulus</fullName>
+                <default>false</default>
+                <label>Switching to Cumulus</label>
+            </value>
+            <value>
+                <fullName>Cash Out Refinance</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Cash Out Refinance</label>
+            </value>
+            <value>
+                <fullName>Student Loan Cash Out Refinance</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Student Loan Cash Out Refinance</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

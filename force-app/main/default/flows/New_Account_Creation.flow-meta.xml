@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>49.0</apiVersion>
+    <choices>
+        <name>Brokerage_Account</name>
+        <choiceText>Brokerage Account</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Brokerage</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Checking</name>
+        <choiceText>Checking</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Checking</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Education_Savings_Account_ESA</name>
+        <choiceText>Education Savings Account (ESA)</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>ESA</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Individual_Retirement_Account_IRA</name>
+        <choiceText>Individual Retirement Account (IRA)</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>IRA</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Savings</name>
+        <choiceText>Savings</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Savings</stringValue>
+        </value>
+    </choices>
+    <description>This Flow prompts a set of questions related to creating a new Financial Account in a brokerage company. Intended for use in Service Console from Action List or NBA but could also be used in Communities. Does not update or depend on any Salesforce data.</description>
+    <interviewLabel>New Account Creation {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>New Account Creation</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>Flow</processType>
+    <screens>
+        <name>Account_Information_Input2</name>
+        <label>Account Information Input</label>
+        <locationX>541</locationX>
+        <locationY>118</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Confirmation_Display</targetReference>
+        </connector>
+        <fields>
+            <name>Bank_or_Financial_Instution_Name</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>Bank of America</stringValue>
+            </defaultValue>
+            <fieldText>Bank or Financial Instution Name</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Routing_Number</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>125000024</stringValue>
+            </defaultValue>
+            <fieldText>Routing Number</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Account_Number</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>7648756748</stringValue>
+            </defaultValue>
+            <fieldText>Account Number</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Bank_Account_Type</name>
+            <choiceReferences>Checking</choiceReferences>
+            <choiceReferences>Savings</choiceReferences>
+            <dataType>String</dataType>
+            <fieldText>Account Type</fieldText>
+            <fieldType>RadioButtons</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Amount</name>
+            <dataType>Currency</dataType>
+            <defaultValue>
+                <numberValue>10000.0</numberValue>
+            </defaultValue>
+            <fieldText>Amount</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+            <scale>0</scale>
+        </fields>
+        <fields>
+            <name>DisclaimerDisplay</name>
+            <fieldText>I hereby authorize LPL Financials (LPL) to initiate an ACH Debit entry from my account indicated above at the institution named above. If necessary, I authorize debit entries and adjustment for any debit entry presented in error on my account. This authorization is valid for a one-time entry. If the date of the transaction is not a business day, all activity will occur on the next business day. If the automatic transfer is returned for any reason, including non-sufficient funds, LPL may assess a fee. LPL has the right to terminate this authorization agreement for any reason.</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>I_Agree</name>
+            <dataType>Boolean</dataType>
+            <defaultValue>
+                <booleanValue>true</booleanValue>
+            </defaultValue>
+            <fieldText>I Agree</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Account_Type_Input</name>
+        <label>Account Type Input</label>
+        <locationX>367</locationX>
+        <locationY>117</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Account_Information_Input2</targetReference>
+        </connector>
+        <fields>
+            <name>AccountTypeDisplay</name>
+            <fieldText>Next I need to understand what type of account it is you are looking to open</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>Account_Type</name>
+            <choiceReferences>Individual_Retirement_Account_IRA</choiceReferences>
+            <choiceReferences>Education_Savings_Account_ESA</choiceReferences>
+            <choiceReferences>Brokerage_Account</choiceReferences>
+            <dataType>String</dataType>
+            <fieldText>Account Type</fieldText>
+            <fieldType>RadioButtons</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Application_Complete_Header</name>
+        <label>Application_Complete_Header</label>
+        <locationX>840</locationX>
+        <locationY>128</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>true</allowPause>
+        <fields>
+            <name>Application_Complete</name>
+            <extensionName>flowruntime:image</extensionName>
+            <fieldType>ComponentInstance</fieldType>
+            <inputParameters>
+                <name>imageName</name>
+                <value>
+                    <elementReference>Brokerage_Account</elementReference>
+                </value>
+            </inputParameters>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>New_Account_Application_Submitted</name>
+            <fieldText>&lt;h2 style=&quot;text-align: center;&quot;&gt;&lt;b style=&quot;font-size: 20px;&quot;&gt;Your Application is Complete!&lt;/b&gt;&lt;/h2&gt;&lt;p style=&quot;text-align: center;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;text-align: center;&quot;&gt;&lt;span style=&quot;font-size: 16px;&quot;&gt;Congratulations, your Cumulus IRA application is complete! Check your email for more details about your account.&amp;nbsp;&lt;/span&gt;&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Confirmation_Display</name>
+        <label>Confirmation Display</label>
+        <locationX>698</locationX>
+        <locationY>124</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Application_Complete_Header</targetReference>
+        </connector>
+        <fields>
+            <name>ConfirmationText</name>
+            <fieldText>We are about to create the new account. Please validate that the following information is correct:
+
+First Name: {!First_Name}
+Last Name: {!Last_Name}
+Phone: {!Phone_Number}
+Email: {!Email_Address}
+
+The account type you need to create is a {!Account_Type} account
+The money will be transferred from the following financial institution:
+
+Name: {!Bank_or_Financial_Instution_Name}
+Routing: {!Routing_Number}
+Account: {!Account_Number}
+Type: {!Bank_Account_Type}
+Amount: {!Amount}
+
+Is this all correct? When you click Next this information will get entered into the system.</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Name_Information_Input</name>
+        <label>Name Information Input</label>
+        <locationX>180</locationX>
+        <locationY>117</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>true</allowPause>
+        <connector>
+            <targetReference>Account_Type_Input</targetReference>
+        </connector>
+        <fields>
+            <name>First_Name</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>Michelle</stringValue>
+            </defaultValue>
+            <fieldText>First Name</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Last_Name</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>Williams</stringValue>
+            </defaultValue>
+            <fieldText>Last Name</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Phone_Number</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>(415) 555-1234</stringValue>
+            </defaultValue>
+            <fieldText>Phone Number</fieldText>
+            <fieldType>InputField</fieldType>
+            <helpText>Primary phone number where we can reach customer</helpText>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>Email_Address</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>mwilliams@example.com</stringValue>
+            </defaultValue>
+            <fieldText>Email Address</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>SSN</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>555-12-3456</stringValue>
+            </defaultValue>
+            <fieldText>SSN</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <startElementReference>Name_Information_Input</startElementReference>
+    <status>Active</status>
+</Flow>

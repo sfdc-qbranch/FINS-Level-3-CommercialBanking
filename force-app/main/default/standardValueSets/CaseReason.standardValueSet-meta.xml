@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sorted>false</sorted>
+    <standardValue>
+        <fullName>Problem Resolved</fullName>
+        <default>false</default>
+        <label>Problem Resolved</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>Documentation Issue</fullName>
+        <default>false</default>
+        <label>Documentation Issue</label>
+        <cssExposed>true</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>Existing problem</fullName>
+        <default>false</default>
+        <label>Existing problem</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>Mail delivery issue</fullName>
+        <default>false</default>
+        <label>Mail delivery issue</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>New problem</fullName>
+        <default>false</default>
+        <label>New problem</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>Hardware Issue</fullName>
+        <default>false</default>
+        <label>Hardware Issue</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>Software Issue</fullName>
+        <default>false</default>
+        <label>Software Issue</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>Feature Request</fullName>
+        <default>false</default>
+        <label>Feature Request</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>Fraud Concern</fullName>
+        <default>false</default>
+        <label>Fraud Concern</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>Mobile Issue</fullName>
+        <default>false</default>
+        <label>Mobile Issue</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>Password Reset</fullName>
+        <default>false</default>
+        <label>Password Reset</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>General Inquiry</fullName>
+        <default>false</default>
+        <label>General Inquiry</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>Mortgage Inquiry</fullName>
+        <default>false</default>
+        <label>Mortgage Inquiry</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>Check Reorder</fullName>
+        <default>false</default>
+        <label>Check Reorder</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>Card Reorder</fullName>
+        <default>false</default>
+        <label>Card Reorder</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>New Account</fullName>
+        <default>false</default>
+        <label>New Account</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>Branch Inquiry</fullName>
+        <default>false</default>
+        <label>Branch Inquiry</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>Home Damage</fullName>
+        <default>false</default>
+        <label>Home Damage</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>Lost Card</fullName>
+        <default>false</default>
+        <label>Lost Card</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>HELOC</fullName>
+        <default>false</default>
+        <label>HELOC</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>Transaction Dispute</fullName>
+        <default>false</default>
+        <label>Transaction Dispute</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>Appointment</fullName>
+        <default>false</default>
+        <label>Appointment</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>Credit Increase</fullName>
+        <default>false</default>
+        <label>Credit Increase</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>Collateral</fullName>
+        <default>false</default>
+        <label>Collateral</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>Documentation</fullName>
+        <default>false</default>
+        <label>Documentation</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>Margin Call</fullName>
+        <default>false</default>
+        <label>Margin Call</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>Settlement</fullName>
+        <default>false</default>
+        <label>Settlement</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+</StandardValueSet>

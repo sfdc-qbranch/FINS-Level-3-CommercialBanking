@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>FINS_CommercialBanking_Level1Service__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>FINS Commercial Banking Treasury Management Implementation use case</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Check to bundle all Level I Service (Account Activity Summary &amp; Detail, Account Transfers, Bill Payment and Presentment, Online Statements, and Export Options).</inlineHelpText>
+    <label>Level I Service</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

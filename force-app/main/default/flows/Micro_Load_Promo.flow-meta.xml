@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>49.0</apiVersion>
+    <choices>
+        <name>Interested_in_Special_Offer</name>
+        <choiceText>Yes</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Interested in Special Offer</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Yes</name>
+        <choiceText>Yes</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Yes</stringValue>
+        </value>
+    </choices>
+    <decisions>
+        <name>Interested_in_Special_Offer2</name>
+        <label>Interested in Special Offer</label>
+        <locationX>745</locationX>
+        <locationY>104</locationY>
+        <defaultConnector>
+            <targetReference>NotINterestedSpecialOffer</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>[Default Outcome]</defaultConnectorLabel>
+        <rules>
+            <name>Interested2</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>YesAcceptOffer</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <elementReference>Interested_in_Special_Offer</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Send_Email</targetReference>
+            </connector>
+            <label>Interested</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Special_Offer_Decision</name>
+        <label>Special Offer Decision</label>
+        <locationX>369</locationX>
+        <locationY>106</locationY>
+        <defaultConnector>
+            <targetReference>WhenUserDecline</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Not Interested</defaultConnectorLabel>
+        <rules>
+            <name>Interested</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>SpecialOfferAnswer</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <elementReference>Yes</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>UserAcceptsHearSpecialOffer</targetReference>
+            </connector>
+            <label>Interested</label>
+        </rules>
+    </decisions>
+    <description>Presents a few screens related to promo around micro loans. Intended to run from service console as an &quot;upsell&quot; flow that can be initiated from Action List or NBA. Does not update or depend on any Salesforce data.</description>
+    <interviewLabel>Micro Loan Promo {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Micro Loan Promo</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>Flow</processType>
+    <screens>
+        <name>Check_for_interest</name>
+        <label>Check for interest</label>
+        <locationX>180</locationX>
+        <locationY>104</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Special_Offer_Decision</targetReference>
+        </connector>
+        <fields>
+            <name>fra</name>
+            <fieldText>Cumulus Lending is pleased to offer some new services that we have found many of our customers around the world benefitting from. Are you interested in hearing more about this?</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>SpecialOfferAnswer</name>
+            <choiceReferences>Yes</choiceReferences>
+            <dataType>String</dataType>
+            <fieldText>Answer</fieldText>
+            <fieldType>RadioButtons</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>NotINterestedSpecialOffer</name>
+        <label>NotINterestedSpecialOffer</label>
+        <locationX>754</locationX>
+        <locationY>285</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>fraecdd</name>
+            <fieldText>Ok, thanks for your time</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Send_Email</name>
+        <label>Send Email</label>
+        <locationX>961</locationX>
+        <locationY>104</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>gvrecds</name>
+            <fieldText>That sounds great, I will go ahead and send you the application that needs to be filled out. Can you confirm that sara.lee@example.com is the best email to reach you at?</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>UserAcceptsHearSpecialOffer</name>
+        <label>UserAcceptsHearSpecialOffer</label>
+        <locationX>585</locationX>
+        <locationY>102</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Interested_in_Special_Offer2</targetReference>
+        </connector>
+        <fields>
+            <name>ecafrcs</name>
+            <fieldText>Great, so we have a new offering that includes Micro Loans. Right now we&apos;re introducing this at a special rate of 4.75% and we are happy to allow you to pay it off over 12 months. Is this something you are interested in?</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>YesAcceptOffer</name>
+            <choiceReferences>Interested_in_Special_Offer</choiceReferences>
+            <dataType>String</dataType>
+            <fieldText>Yes, I am Interested in Special Offer</fieldText>
+            <fieldType>RadioButtons</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>WhenUserDecline</name>
+        <label>WhenUserDecline</label>
+        <locationX>377</locationX>
+        <locationY>267</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>true</allowPause>
+        <fields>
+            <name>gref</name>
+            <fieldText>&lt;DIV ALIGN=&quot;LEFT&quot;&gt;&lt;FONT FACE=&quot;Arial&quot; STYLE=&quot;font-size:16px&quot; COLOR=&quot;#000000&quot; LETTERSPACING=&quot;0&quot; KERNING=&quot;0&quot;&gt;Ok, no worries. I figured it was worth mentioning this.&lt;/FONT&gt;&lt;/DIV&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <startElementReference>Check_for_interest</startElementReference>
+    <status>Active</status>
+</Flow>

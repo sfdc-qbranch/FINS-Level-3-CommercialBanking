@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PathAssistant xmlns="http://soap.sforce.com/2006/04/metadata">
+    <active>true</active>
+    <entityName>Case</entityName>
+    <fieldName>Status</fieldName>
+    <masterLabel>Commercial Banking - Treasury Child</masterLabel>
+    <pathAssistantSteps>
+        <fieldNames>FINS_CommercialBanking_Level2Services__c</fieldNames>
+        <fieldNames>FINS_CommercialBanking_Level3Service__c</fieldNames>
+        <info>&lt;p&gt;&lt;b&gt;&lt;u&gt;Level II Service Includes&lt;/u&gt;&lt;/b&gt;: &lt;/p&gt;&lt;ul&gt;&lt;li&gt;ACH Collections&lt;/li&gt;&lt;li&gt;RDC&lt;/li&gt;&lt;li&gt;Lockbox&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;&lt;u&gt;Level III Service Includes&lt;/u&gt;&lt;/b&gt;:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;LockBox Solutions&lt;/li&gt;&lt;li&gt;Merchant Processing Solutions&lt;/li&gt;&lt;li&gt;Mobile RDC&lt;/li&gt;&lt;/ul&gt;</info>
+        <picklistValueName>Add-ons</picklistValueName>
+    </pathAssistantSteps>
+    <pathAssistantSteps>
+        <fieldNames>FINS_CommercialBanking_TopApprover__c</fieldNames>
+        <info>&lt;p&gt;Top Level Approver is usually the Primary Contact.&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;In larger Enterprise Accounts, the CFO, Treasury or other Executive Administrator will play this role.&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;This role is also responsible for approving any product changes, upgrades etc.&lt;/p&gt;</info>
+        <picklistValueName>Assign Top Level Approver</picklistValueName>
+    </pathAssistantSteps>
+    <pathAssistantSteps>
+        <fieldNames>FINS_CommercialBanking_Level1Service__c</fieldNames>
+        <fieldNames>FINS_CommercialBanking_AccountActivity__c</fieldNames>
+        <fieldNames>FINS_CommercialBanking_AcctTransfers__c</fieldNames>
+        <fieldNames>FINS_CommercialBanking_BillPayPresent__c</fieldNames>
+        <fieldNames>FINS_CommercialBanking_OnlineStatement__c</fieldNames>
+        <info>&lt;p&gt;&lt;b&gt;Select Level I Service to bundle all following features, or select features Ad-Hoc.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;Account Activity&lt;/b&gt; - provide customized &amp;amp; consolidated reporting on high-transaction-volumes&lt;/li&gt;&lt;li&gt;&lt;b&gt;Account Transfers&lt;/b&gt; - Simplify accounting with account transfers&lt;/li&gt;&lt;li&gt;&lt;b&gt;Bill Payment &amp;amp; Presentation&lt;/b&gt; - manage &lt;a href=&quot;https://www.synovus.com/business/manage-cash-flow/receivables-services&quot; target=&quot;_blank&quot;&gt;Receivables&lt;/a&gt; and &lt;a href=&quot;https://www.synovus.com/business/manage-cash-flow/disbursement-services&quot; target=&quot;_blank&quot;&gt;Disbursements&lt;/a&gt;, and receive top-notch &lt;a href=&quot;https://www.synovus.com/business/manage-cash-flow/information-reporting&quot; target=&quot;_blank&quot;&gt;Information Reporting&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;b&gt;Online Statements&lt;/b&gt; - Stop receiving paper statements in the mail, view, download or print your statements in Mobile or Online Banking anytime.&lt;/li&gt;&lt;/ul&gt;</info>
+        <picklistValueName>Base Services</picklistValueName>
+    </pathAssistantSteps>
+    <pathAssistantSteps>
+        <info>&lt;p&gt;&lt;strong&gt;Review your handywork for accuracy!&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;</info>
+        <picklistValueName>Review</picklistValueName>
+    </pathAssistantSteps>
+    <pathAssistantSteps>
+        <fieldNames>FINS_CommercialBanking_PrimUserEntitle__c</fieldNames>
+        <fieldNames>FINS_CommercialBanking_AdminEntitle__c</fieldNames>
+        <fieldNames>FINS_CommercialBanking_TechEntitle__c</fieldNames>
+        <info>&lt;p&gt;Contacts have already been selected at the Treasury MSA level.&lt;/p&gt;&lt;p&gt;Entitlements of:&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Full&lt;/li&gt;&lt;li&gt;Limited&lt;/li&gt;&lt;li&gt;Setup&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;are chosen here and will determine training, access and implementation roles and product access.&lt;/p&gt;</info>
+        <picklistValueName>User Access &amp; Entitlements</picklistValueName>
+    </pathAssistantSteps>
+    <recordTypeName>FINS_Commercial_Banking_Treasury_Management_Child</recordTypeName>
+</PathAssistant>

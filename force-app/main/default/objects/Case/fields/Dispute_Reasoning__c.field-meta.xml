@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Dispute_Reasoning__c</fullName>
+    <externalId>false</externalId>
+    <label>Dispute Reasoning</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>The charges were not made by me/a person authorized by me</fullName>
+                <default>false</default>
+                <label>The charges were not made by me/a person authorized by me</label>
+            </value>
+            <value>
+                <fullName>The transaction is mine, but I dispute it</fullName>
+                <default>false</default>
+                <label>The transaction is mine, but I dispute it</label>
+            </value>
+            <value>
+                <fullName>I asked the merchant for a credit adjustment, but unsatisfied</fullName>
+                <default>false</default>
+                <label>I asked the merchant for a credit adjustment, but unsatisfied</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

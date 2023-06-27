@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Edit_Lines__c</fullName>
+    <externalId>false</externalId>
+    <formula>HYPERLINK(IF( $User.UIThemeDisplayed == &apos;Theme4d&apos;, &apos;/one/one.app#/alohaRedirect/apex/SBQQ__sb?scontrolCaching=1&amp;id=&apos; + Id, &apos;/apex/SBQQ__sb?scontrolCaching=1&amp;id=&apos; + Id),&apos;Line Editor&apos;, &quot;_self&quot;)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Edit Lines</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>
