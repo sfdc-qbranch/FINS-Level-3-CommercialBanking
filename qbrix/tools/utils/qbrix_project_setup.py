@@ -5,14 +5,16 @@ from datetime import datetime
 from os.path import exists
 
 from cumulusci.core.tasks import BaseTask
-from qbrix.tools.shared.qbrix_console_utils import init_logger
-from qbrix.tools.shared.qbrix_project_tasks import download_and_unzip, get_qbrix_repo_url, replace_file_text
-from qbrix.tools.shared.qbrix_json_tasks import update_json_file_value
 
-log = init_logger()
+from qbrix.tools.shared.qbrix_json_tasks import update_json_file_value
+from qbrix.tools.shared.qbrix_project_tasks import (download_and_unzip,
+                                                    get_qbrix_repo_url,
+                                                    replace_file_text)
 
 
 class InitProject(BaseTask, ABC):
+
+    """Initializes a Q Brix Project"""
 
     task_docs = """
     Used to setup the initial project based on the connected Q Brix Repo. Must be run at initial project setup time before you start developing, although can be run anytime there after to update files and settings related to this project.
@@ -37,13 +39,15 @@ class InitProject(BaseTask, ABC):
         self.repo_url = self.project_config.project__git__repo_url
         self.template_file_location = "force-app/main/default/customMetadata/xDO_Base_QBrix_Register.xDO_Template.md-meta.xml"
 
-        self.TestMode = False
+        self.run_in_test_mode = False
         if "TestMode" in self.options:
-            self.TestMode = self.options["TestMode"]
-            if self.TestMode:
+            self.run_in_test_mode = self.options["TestMode"]
+            if self.run_in_test_mode:
                 self.logger.info("Test Mode Enabled. No Files will be updated.")
 
     def update_create_qbrix_register(self, file_location):
+
+        """Updates the Q Brix Register Detail File"""
 
         now = datetime.now()
 
@@ -85,11 +89,11 @@ class InitProject(BaseTask, ABC):
             </values>
       </CustomMetadata>"""
 
-        if self.TestMode:
+        if self.run_in_test_mode:
             print(xml)
         else:
-            with open(file_location, "w") as f:
-                f.write(xml)
+            with open(file_location, "w", encoding="utf-8") as qbrix_details_file:
+                qbrix_details_file.write(xml)
 
     def _run_task(self):
 
@@ -105,7 +109,7 @@ class InitProject(BaseTask, ABC):
             if qbrix_name is not None and qbrix_name != "":
                 self.repo_url = repo_url
                 self.project_name = qbrix_name
-                self.logger.info(f" -> Found Q Brix Name: {qbrix_name} located on GitHub at {repo_url}")
+                self.logger.info(" -> Found Q Brix Name: %s located on GitHub at %s", qbrix_name, repo_url)
         else:
             raise Exception("Unable to determine linked Github Repo. Ensure you are running this command within a CumulusCI project and that you have completed the prerequisites to install and configure Git and GitHub Desktop.")
 
@@ -147,7 +151,7 @@ class InitProject(BaseTask, ABC):
                     self.qbrix_publisher_team = input("\n\nEnter the publisher's team name for this Q Brix (e.g. Q Branch): ") or "OWNER OR PUBLISHER TEAM HERE"
                     replace_file_text("cumulusci.yml", "OWNER OR PUBLISHER TEAM HERE", self.qbrix_publisher_team)
 
-        default_docs_location = f"https://confluence.internal.salesforce.com/pages/viewpage.action?pageId=487362018"
+        default_docs_location = "https://confluence.internal.salesforce.com/pages/viewpage.action?pageId=487362018"
         if self.qbrix_documentation_url == "" or self.qbrix_documentation_url == default_docs_location:
             self.qbrix_documentation_url = input("\n\nEnter the URL for documentation related to this Q Brix: ") or default_docs_location
             replace_file_text("cumulusci.yml", default_docs_location, self.qbrix_documentation_url)
@@ -176,11 +180,11 @@ class InitProject(BaseTask, ABC):
                 # Clean Up any existing files which would cause issues
                 if not exists(self.template_file_location) and not exists(final_file_name):
                     register_files = glob.glob(
-                        "force-app/main/default/customMetadata/" + "/**/xDO_Base_QBrix_Register.*.md-meta.xml",
+                        "force-app/main/default/customMetadata/xDO_Base_QBrix_Register.*.md-meta.xml",
                         recursive=True)
                     for file_to_delete in register_files:
                         os.remove(file_to_delete)
-                        self.logger.info(f"Q Brix Registration: Removed old or incorrect file {file_to_delete}")
+                        self.logger.info("Q Brix Registration: Removed old or incorrect file %s", file_to_delete)
 
                 if exists(self.template_file_location):
                     os.rename(self.template_file_location, final_file_name)

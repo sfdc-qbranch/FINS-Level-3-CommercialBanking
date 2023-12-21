@@ -4,9 +4,9 @@ import shutil
 import subprocess
 from abc import ABC
 
-
-from cumulusci.core.tasks import BaseTask
 from cumulusci.cli.runtime import CliRuntime
+from cumulusci.core.tasks import BaseTask
+
 from qbrix.tools.shared.qbrix_console_utils import init_logger
 
 log = init_logger()
@@ -14,7 +14,7 @@ log = init_logger()
 class MetadataChecker(BaseTask, ABC):
     cci_cache_path = ".cci/projects"
     base_folders = set()
-    
+
     task_docs = """
     MetadataChecker: this is a simple tool helps you finding if a metadata already exists in your source QBrix,
     This tool can work in two mode: Search mode and Scan mode
@@ -27,17 +27,17 @@ class MetadataChecker(BaseTask, ABC):
             optional in scan mode
             the type of metadata, usually you can just use the folder names, such as flows, quickActions and etc
             for the metadata live within object folders, use just the sub folder names, such as fields, recordTypes
-        api_names: 
+        api_names:
             optional in scan mode
-            this can be a comma separated list of metadata api names, 
-            for the metadata sits within object folder, 
-                the first api name need to be in "object_api_name.metadata_api_name" format, 
-                while the following ones can be the metadata_api_name only, it will use the last object_api_name you entered, 
-                example of valid input: Case.field1__c,field2__c,account.field1__c,field2__c, 
+            this can be a comma separated list of metadata api names,
+            for the metadata sits within object folder,
+                the first api name need to be in "object_api_name.metadata_api_name" format,
+                while the following ones can be the metadata_api_name only, it will use the last object_api_name you entered,
+                example of valid input: Case.field1__c,field2__c,account.field1__c,field2__c,
                 example of invalid input: field1__c,case.field2__c
         refresh_base:
-            optional, default to True, 
-            the script will refresh the cached base repos, 
+            optional, default to True,
+            the script will refresh the cached base repos,
             you can set to False to save time if you need to run the command multiple times
         check_myself:
             optional, default to False, and will be force to False in "scan_mode"
@@ -57,7 +57,7 @@ class MetadataChecker(BaseTask, ABC):
             if set to True, it will scan all metadata in your current QBrix and try to see if they exists in any base QBrix
         dependency_flow:
             optional, default to "deploy_qbrix"
-            Instead of using the deploy_qbrix to check source dependencies, you can design your own flow to include any QBrix you want, 
+            Instead of using the deploy_qbrix to check source dependencies, you can design your own flow to include any QBrix you want,
             usually use this to check your "Sibling QBrix"
         show_found_only:
             optional, default to False in search mode and default to True in scan mode
@@ -142,6 +142,28 @@ class MetadataChecker(BaseTask, ABC):
                 "key": "settings",
                 "meta_ext": ".settings-meta.xml",
             },
+            "staticresources": {
+                "meta_ext": ".resource-meta.xml",
+            },
+            "contentassets": {
+                "meta_ext": ".asset-meta.xml",
+            },
+            "recommendationStrategies": {
+                "key": "recommendationStrategy",
+                "meta_ext": ".recommendationStrategy-meta.xml",
+            },
+            "omniDataTransforms": {
+                "meta_ext": ".rpt-meta.xml",
+            },
+            "omniIntegrationProcedures": {
+                "meta_ext": ".oip-meta.xml",
+            },
+            "omniScripts": {
+                "meta_ext": ".os-meta.xml",
+            },
+            "omniUiCard": {
+                "meta_ext": ".ouc-meta.xml",
+            },
         }
 
         try:
@@ -166,11 +188,11 @@ class MetadataChecker(BaseTask, ABC):
         except:
             print("Unable to initiate initial options and settings.")
 
-    
+
     def _init_metadata_type_detail(self, metadata_type):
         # each type will have some details go with them to define the behaviors
         # usually, we will just use the folder name as the metadata types, so users can easily copy/paste from repo
-        
+
         #init the obj
         self.metadata_type_detail = self.metadata_types[metadata_type.lower()].copy() if metadata_type.lower() in self.metadata_types else {}
 
@@ -179,20 +201,20 @@ class MetadataChecker(BaseTask, ABC):
         if not "key" in self.metadata_type_detail:
             self.metadata_type_detail["key"] = metadata_type[0:-1] if metadata_type.lower().endswith("s") else metadata_type
 
-        
+
         # for these special metadata types, they will sit within object folder, so we mark them by giving a "in_obj" key, and gave them special folder info
         if metadata_type.lower() in ["businessprocesses","compactlayouts","fields","fieldsets","listviews","recordtypes","weblinks"]:
             self.metadata_type_detail["in_obj"] = True
             if not "folder" in self.metadata_type_detail:
-                self.metadata_type_detail["folder"] = f"objects/__object_api__/{self.options['metadata_type']}"
+                self.metadata_type_detail["folder"] = f"objects/__object_api__/{metadata_type}"
         # for other none special types, define in which folder we will be searching for the metadata, usually will just be the metadata type
-        else: 
+        else:
             if not "folder" in self.metadata_type_detail:
                 self.metadata_type_detail["folder"] = metadata_type
-        
+
         # the "meta_ext" is the extension name of the metadata file, we use it to check if the file is indeed a valid metadata file. by default, it will be .{key}-meta.xml
         if not "meta_ext" in self.metadata_type_detail:
-            self.metadata_type_detail["meta_ext"] = f".{self.options['metadata_type'][0:-1]}-meta.xml" if "in_obj" in self.metadata_type_detail else f".{self.metadata_type_detail['key']}-meta.xml"
+            self.metadata_type_detail["meta_ext"] = f".{metadata_type[0:-1]}-meta.xml" if "in_obj" in self.metadata_type_detail else f".{self.metadata_type_detail['key']}-meta.xml"
 
 
     def _refresh_base(self):
@@ -218,6 +240,19 @@ class MetadataChecker(BaseTask, ABC):
 
         if self.check_myself:
             self.base_folders.add("./")
+
+
+    def _get_all_code_folders(self, base_folder):
+        my_folders = ["force-app/main/default/"]
+
+        unpackaged_path = os.path.join(base_folder,"unpackaged")
+        if not os.path.exists(unpackaged_path):
+            return my_folders
+
+        for one_unpackaged_folder in sorted(os.listdir(unpackaged_path)):
+            my_folders.append(f"unpackaged/{one_unpackaged_folder}")
+
+        return my_folders
 
 
     def find_metadata(self, metadata_type, api_names):
@@ -250,7 +285,7 @@ class MetadataChecker(BaseTask, ABC):
             # for the "in_obj" type of metadata, the object api name is required, so we need some method to validate user input.
             if("in_obj" in self.metadata_type_detail):
                 api_name_parts = full_meta_api.split(".")
-                
+
                 # we do allow lazy users to do something like Case.field1,field2,field3, so they don't have to specify the object api name every time
                 if len(api_name_parts) == 2:
                     object_api = api_name_parts[0]
@@ -272,7 +307,7 @@ class MetadataChecker(BaseTask, ABC):
                 found_results = self._find_meta_in_base(full_meta_api, base_folder)
                 if len(found_results):
                     meta_results += found_results
-            
+
             if len(meta_results):
                 log.info(f"\n    {full_meta_api} <{metadata_type}>")
                 print(meta_results)
@@ -280,13 +315,13 @@ class MetadataChecker(BaseTask, ABC):
                 if not self.show_found_only:
                     log.info(f"\n    no matching <{metadata_type}> found for {full_meta_api}")
                 to_pull += f",{full_meta_api}"
-        
+
         # if we did not set the pull_metadata in option, and there is some metadata missing, we will ask if you want to pull it down from source
         if to_pull and self.pull_metadata == "ask":
             do_we_pull = input("\n********\nSome of the metadata were not found anywhere, do you want to pull it down from your default org? (Y/n)")
             if not do_we_pull or do_we_pull.lower() == "y":
                 self.pull_metadata = "pull"
-        
+
         if to_pull and self.pull_metadata == "pull":
             my_cmd = f"sfdx force:source:retrieve -m {self.metadata_type_detail['key']}:{to_pull[1:]}"
             if "sfdx_u" in self.options:
@@ -302,44 +337,45 @@ class MetadataChecker(BaseTask, ABC):
 
 
     def scan_metadata(self):
-        for one_folder in ["force-app/main/default/","unpackaged/pre","unpackaged/post"]:
+        code_folders = self._get_all_code_folders("./")
+        for one_folder in code_folders:
             one_folder_path = os.path.join("./",one_folder)
 
             if not os.path.exists(one_folder_path):
                 continue
-            
-            for one_metadata_type in os.listdir(one_folder_path):
+
+            for one_metadata_type in sorted(os.listdir(one_folder_path)):
                 # log.debug(f"check {one_metadata_type} in {one_folder}")
                 one_metadata_type_path = os.path.join(one_folder_path, one_metadata_type)
                 if not os.path.isdir(one_metadata_type_path):
                     continue
 
                 if one_metadata_type in {"aura","lwc"}:
-                    self.find_metadata(one_metadata_type,",".join(os.listdir(one_metadata_type_path)))
+                    self.find_metadata(one_metadata_type,",".join(sorted(os.listdir(one_metadata_type_path))))
                     #do something
-                
+
                 elif one_metadata_type in {"objects"}:
-                    for one_object in os.listdir(one_metadata_type_path):
+                    for one_object in sorted(os.listdir(one_metadata_type_path)):
                         one_object_path = os.path.join(one_metadata_type_path, one_object)
                         if not os.path.isdir(one_object_path):
                             continue
 
-                        for one_obj_metadata in os.listdir(one_object_path):
+                        for one_obj_metadata in sorted(os.listdir(one_object_path)):
                             one_obj_metadata_path = os.path.join(one_object_path, one_obj_metadata)
                             if not os.path.isdir(one_obj_metadata_path):
                                 continue
 
                             api_names = ""
-                            for one_file in os.listdir(one_obj_metadata_path):
+                            for one_file in sorted(os.listdir(one_obj_metadata_path)):
                                 if re.search(r'\.\w+\-meta\.xml$',one_file):
                                     my_api = re.sub(r'\.\w+\-meta\.xml$',"",one_file)
                                     api_names += f",{one_object}.{my_api}"
                             if api_names:
                                 self.find_metadata(one_obj_metadata,api_names[1:])
-                
+
                 else:
                     api_names = ""
-                    for one_file in os.listdir(one_metadata_type_path):
+                    for one_file in sorted(os.listdir(one_metadata_type_path)):
                         if re.search(r'\.\w+\-meta\.xml$',one_file):
                             my_api = re.sub(r'\.\w+\-meta\.xml$',"",one_file)
                             api_names += f",{my_api}"
@@ -363,22 +399,23 @@ class MetadataChecker(BaseTask, ABC):
         my_results = ""
 
         # get the folder path of where the metadata should be
-        for one_folder in ["force-app/main/default/","unpackaged/pre","unpackaged/post"]:
+        code_folders = self._get_all_code_folders(base_path)
+        for one_folder in code_folders:
             meta_path = os.path.join(base_path, one_folder)
             meta_path = os.path.join(meta_path, self.metadata_type_detail["folder"].replace("__object_api__",object_api))
 
             if not os.path.exists(meta_path):
                 continue
-            
+
             # while this "one_file" could be a file or a folder
-            for one_file in os.listdir(meta_path):
-                
+            for one_file in sorted(os.listdir(meta_path)):
+
                 file_meta = one_file.lower()
 
                 # let's ignore the files that are not end with the "meta_ext"
                 if self.metadata_type_detail["meta_ext"] and not file_meta.endswith(self.metadata_type_detail["meta_ext"].lower()):
                     continue
-                
+
                 # and ignore the non folder if "meta_ext" is empty
                 if not self.metadata_type_detail["meta_ext"] and "." in file_meta:
                     continue
@@ -387,12 +424,12 @@ class MetadataChecker(BaseTask, ABC):
                 file_meta_plain = file_meta
 
                 if object_api:
-                    file_meta_plain = file_meta.replace(object_api.lower(),"")
+                    file_meta_plain = file_meta_plain[len(object_api):] if file_meta_plain.startswith(object_api.lower()) else file_meta_plain
                     file_meta_plain = file_meta_plain[1:] if file_meta_plain.startswith('.') else file_meta_plain
                     if not "in_obj" in self.metadata_type_detail:
                         if not file_meta.startswith(object_api.lower()):
                             continue
-                
+
                 if file_meta_plain == meta_api.lower():
                     my_results += f"        -- EXACT API name: {one_file} -- in {base_path.replace(self.cci_cache_path, '')[1:]}/{one_folder}\n"
                 elif file_meta_plain.endswith(meta_api.lower()):
@@ -408,7 +445,7 @@ class MetadataChecker(BaseTask, ABC):
         # if refresh_base set to true, we will load the info of flow deploy_qbrix, which should trigger a cache of all source/base qbrixs, well, if the yml file is properly configured.
         if self.refresh_base:
             self._refresh_base()
-        
+
         # get all base folders
         self._find_base_folders()
 
@@ -417,4 +454,3 @@ class MetadataChecker(BaseTask, ABC):
         else:
             self.find_metadata('','')
 
-        

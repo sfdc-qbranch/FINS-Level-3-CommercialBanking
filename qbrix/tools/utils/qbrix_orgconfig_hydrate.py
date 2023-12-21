@@ -1,15 +1,150 @@
-import os
-import json
-import requests
 import glob
+import json
+import os
 import subprocess
-
 from abc import abstractmethod
+from qbrix.tools.shared.qbrix_authentication import *
+
+import requests
 from cumulusci.core.config import ScratchOrgConfig
-from cumulusci.tasks.sfdx import SFDXBaseTask
 from cumulusci.core.exceptions import CommandException
 from cumulusci.core.keychain import BaseProjectKeychain
+from cumulusci.tasks.sfdx import SFDXBaseTask
 
+class NGTrapDoorInjector(SFDXBaseTask):
+    task_options = {
+        
+        "trapname": {
+            "description": "The name to store under in the trapdoor package",
+            "required": False
+        },
+        "context": {
+            "description": "Value to store. Max 1020 bytes",
+            "required": False
+        },
+        "org": {
+            "description": "Value to replace every instance of the find value in the source file.",
+            "required": False
+        }
+    }
+
+    def _init_options(self, kwargs):
+        super(NGTrapDoorInjector, self)._init_options(kwargs)
+        self.env = self._get_env()
+        self.trapname=None
+        self.context=None
+
+    @property
+    def keychain_cls(self):
+        klass = self.get_keychain_class()
+        return klass or self.keychain_class
+
+    @abstractmethod
+    def get_keychain_class(self):
+        return None
+
+    @property
+    def keychain_key(self):
+        return self.get_keychain_key()
+
+    @abstractmethod
+    def get_keychain_key(self):
+        return None
+
+    def _load_keychain(self):
+        if self.keychain is not None:
+            return
+
+        keychain_key = self.keychain_key if self.keychain_cls.encrypted else None
+
+        if self.project_config is None:
+            self.keychain = self.keychain_cls(self.universal_config, keychain_key)
+        else:
+            self.keychain = self.keychain_cls(self.project_config, keychain_key)
+            self.project_config.keychain = self.keychain
+
+
+    def _prepruntime(self):
+
+        if "trapname" not in self.options or not self.options["trapname"]:
+            self.trapname =None
+        else:
+            self.trapname =self.options["trapname"]
+            
+        if "context" not in self.options or not self.options["context"]:
+            self.context =None
+        else:
+            self.context =self.options["context"]
+
+        if "targetusername" not in self.options or not self.options["targetusername"]:
+
+            if not isinstance(self.org_config, ScratchOrgConfig):
+                self.targetusername = self.org_config.access_token
+            else:
+                self.targetusername = self.org_config.username
+        else:
+            self.targetusername = self.options["targetusername"]
+        
+        #self.logger.info(f'TRAPNAME::{self.trapname}')
+        #self.logger.info(f'CONTEXT::{self.context}')
+
+        self._translate_context()
+        
+    def getenvironvariable(self,name):
+        return os.environ.get(name)
+    
+    def getsecuresetting(self,name):
+        res = get_secure_setting(name)
+        return res
+    
+
+    def _translate_context(self):
+        
+        if(not self.context is None and self.context.startswith("${{") and self.context.endswith("}}")):
+            try:
+                sub1="${{"
+                sub2="}}"
+                idx1 = self.context.find(sub1)
+                idx2 = self.context.find(sub2)
+                exp = self.context[idx1 + len(sub1) : idx2]
+
+                #exit if inline import detected
+                if "__import__" in exp:
+                    return
+                #self.logger.info(f'EVALUATING::{exp}')
+                compliledcode = compile(exp, "<string>", "eval")
+                #no builtins = no __import__ # DO NOT allow globals
+                #restrict scope to expression - no builtins and only locals self
+                res = eval(compliledcode,{},{"self":self})
+                #self.logger.info(f"EXPRESSION::VAL::{res}")
+                if(not res is None):
+                    self.context = res
+                else:
+                    self.context =''
+                    
+            except Exception as inst:
+                self.logger.error(f"Unable to evaluate dynamic express::{inst}")
+        
+    def _run_task(self):
+    
+        self._prepruntime()
+
+        url = f"{self.org_config.instance_url}/services/apexrest/qbrix_devops/NGContextTrapDoorService"
+        inject={}
+        inject['name'] = self.trapname
+        inject['context'] = self.context
+
+        payload = json.dumps(inject)
+        #self.logger.info(url)
+        #self.logger.info(payload)
+        headers = {
+        'Authorization': f'Bearer {self.org_config.access_token}',
+        'Content-Type': 'application/json'
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload)
+        #self.logger.info(response)
+        #print(response.text)
 
 class NGSFDXWrapper(SFDXBaseTask):
     task_options = {
@@ -23,7 +158,7 @@ class NGSFDXWrapper(SFDXBaseTask):
             "required": False
         }
     }
-    
+
     def _init_options(self, kwargs):
         super(NGSFDXWrapper, self)._init_options(kwargs)
         self.env = self._get_env()
@@ -56,16 +191,16 @@ class NGSFDXWrapper(SFDXBaseTask):
         else:
             self.keychain = self.keychain_cls(self.project_config, keychain_key)
             self.project_config.keychain = self.keychain
-            
-    
-    
+
+
+
     def _prepruntime(self):
-        
+
         if "command" not in self.options or not self.options["command"]:
             self.command =None
         else:
             self.command =self.options["command"]
-            
+
         if "targetusername" not in self.options or not self.options["targetusername"]:
 
             if not isinstance(self.org_config, ScratchOrgConfig):
@@ -74,13 +209,13 @@ class NGSFDXWrapper(SFDXBaseTask):
                 self.targetusername = self.org_config.username
         else:
             self.targetusername = self.options["targetusername"]
-            
-        
+
+
         subprocess.run(f"sfdx config:set instanceUrl={self.org_config.instance_url}", shell=True, capture_output=True)
 
-        
-        
-        
+
+
+
     def _run_task(self):
         self._prepruntime()
         cmd = f"sfdx {self.command} --target-org '{self.targetusername}'"
@@ -88,14 +223,14 @@ class NGSFDXWrapper(SFDXBaseTask):
         (out, err)=p.communicate()
         self.logger.info(out)
         self.logger.error(err)
-        
+
         subprocess.run("sfdx config:unset instanceUrl", shell=True, capture_output=True)
-        
+
         if p.returncode != 0:
             raise subprocess.CalledProcessError(p.returncode, f"SFDX Command Failed:: {cmd} ")
-        
-        
-        
+
+
+
 
 class NGBroom(SFDXBaseTask):
     task_options = {
@@ -109,32 +244,32 @@ class NGBroom(SFDXBaseTask):
             "required": False
         }
     }
-    
+
     def _init_options(self, kwargs):
         super(NGBroom, self)._init_options(kwargs)
-        
-        
+
+
     def _prepruntime(self):
 
-        
+
         if "sweep" not in self.options or not self.options["sweep"]:
             self.sweep =None
         else:
             self.sweep =self.options["sweep"]
-        
+
         if "recursive" not in self.options or not self.options["recursive"]:
             self.recursive =True
         else:
             self.recursive =bool(self.options["recursive"])
-        
+
     def _run_task(self):
         self._prepruntime()
         files = glob.glob(self.sweep,recursive=self.recursive)
         for filetosweep in files :
             if(os.path.isfile(filetosweep)):
                 os.remove(filetosweep)
-        
-    
+
+
 class NGAbort(SFDXBaseTask):
     task_options = {
 
@@ -143,11 +278,11 @@ class NGAbort(SFDXBaseTask):
             "required": False
         }
     }
-    
+
     def _init_options(self, kwargs):
         super(NGAbort, self)._init_options(kwargs)
         self.abortmessage=None
-        
+
     def _prepruntime(self):
 
         # if not passed in - fall back to the key ring data
@@ -155,11 +290,11 @@ class NGAbort(SFDXBaseTask):
             self.abortmessage ='The when codition was met'
         else:
             self.abortmessage =self.options["message"]
-        
+
     def _run_task(self):
         self._prepruntime()
         raise Exception(f'This QBrix was stopped due to :: {self.abortmessage}')
-        
+
 class NGOrgConfig(SFDXBaseTask):
     keychain_class = BaseProjectKeychain
     task_options = {
@@ -248,83 +383,86 @@ class NGOrgConfig(SFDXBaseTask):
 
         if self.org_config.is_qbrix_installed is None:
             self.org_config.is_qbrix_installed = self._is_qbrix_installed
-            
+
         if self.org_config.is_object_in_org is None:
             self.org_config.is_object_in_org = self._is_object_present_in_org
-            
+
         if self.org_config.is_psl_in_org is None:
             self.org_config.is_psl_in_org = self._is_psl_present_in_org
-            
+
         if self.org_config.is_ps_in_org is None:
             self.org_config.is_ps_in_org = self._is_ps_present_in_org
-            
+
         if self.org_config.is_namespace_installed is None:
             self.org_config.is_namespace_installed = self._is_package_namespace_installed
-            
+
         if self.org_config.is_package_installed is None:
             self.org_config.is_package_installed = self._is_package_installed
 
         if self.org_config.is_org_identifier is None:
             self.org_config.is_org_identifier = self._check_id_or_guid_in_org
-            
+
         if self.org_config.is_psl_minimal_qty_available_in_org is None:
             self.org_config.is_psl_minimal_qty_available_in_org = self._is_psl_minimal_qty_available_in_org
-            
+
         if self.org_config.is_bulk_check_psl_minimal_qty_available_in_org is None:
             self.org_config.is_bulk_check_psl_minimal_qty_available_in_org = self._is_bulk_check_psl_minimal_qty_available_in_org
-        
+
         if self.org_config.qbrix_cache_get is None:
             self.org_config.qbrix_cache_get = self._cache_item_get
-            
+
         if self.org_config.qbrix_cache_set is None:
             self.org_config.qbrix_cache_set = self._cache_item_set
-            
+
         if self.org_config.is_data_present is None:
             self.org_config.is_data_present = self._is_data_present_in_org
-            
+
         if self.org_config.is_file is None:
             self.org_config.is_file = self._is_file
-        
+
         if self.org_config.is_dir is None:
             self.org_config.is_dir = os.path.isdir
-            
+
         if self.org_config.is_file_glob is None:
             self.org_config.is_file_glob = self._is_glob_file_search
-            
+
         if self.org_config.is_scratch_org is None:
             self.org_config.is_scratch_org = self._is_scratch_org
             
-        
+        if self.org_config.get_secure_setting is None:
+            self.org_config.get_secure_setting = get_secure_setting
+
+
 
     def _seed_initial_cache(self):
         if(self.org_config.qbrix_cache is None):
             self.org_config.qbrix_cache={}
-            
+
     def _cache_item_get(self,key):
         if(self.org_config.qbrix_cache is None):
             self.org_config.qbrix_cache={}
-        
+
         return self.org_config.qbrix_cache.get(key)
-            
+
     def _cache_item_set(self,key,val):
         if(self.org_config.qbrix_cache is None):
             self.org_config.qbrix_cache={}
-        
+
         self.logger.info(f'Cache::{key}::{val}')
         self.org_config.qbrix_cache[key]=val
-        
+
     def _is_scratch_org(self):
         return ".scratch." in self.instanceurl
-    
+
     def _is_file(self,filetofind):
         return os.path.isfile(filetofind)
-    
+
     def _is_glob_file_search(self,filetofind,runrecursive=True):
         foundfiles =glob.glob(filetofind, recursive=runrecursive)
         for file in foundfiles:
             print(file)
         return len(foundfiles) >0
-        
+
 
 
 
@@ -340,7 +478,7 @@ class NGOrgConfig(SFDXBaseTask):
         data = json.loads(response.text)
         self.logger.info(data["totalSize"])
         return data["totalSize"] == 1
-    
+
     def _is_package_namespace_installed(self, namespace):
 
         url = f"{self.instanceurl}/services/data/v56.0/query/?q=select+NamespacePrefix+from+PackageLicense+where+NamespacePrefix='{namespace}'"
@@ -353,7 +491,7 @@ class NGOrgConfig(SFDXBaseTask):
         data = json.loads(response.text)
         self.logger.info(data["totalSize"])
         return data["totalSize"] == 1
-    
+
     def _is_package_installed(self, packagename):
 
         url = f"{self.instanceurl}/services/data/v56.0/tooling/query/?q=select+SubscriberPackage.Name+from+InstalledSubscriberPackage+order+by+SubscriberPackage.Name"
@@ -368,16 +506,16 @@ class NGOrgConfig(SFDXBaseTask):
             if(pkg['SubscriberPackage']['Name']==packagename):
                 return True
             #self.logger.info(pkg['SubscriberPackage']['Name'])
-        
+
         return False
-    
-    
+
+
     def _is_object_present_in_org(self, targetobject):
-        
+
         self.logger.info(f"_is_object_present_in_org::{targetobject}")
         if(targetobject is None):
             return False
-        
+
         #SELECT  QualifiedApiName FROM EntityDefinition Where QualifiedApiName=
 
         url = f"{self.instanceurl}/services/data/v56.0/query/?q=select+QualifiedApiName+from+EntityDefinition+where+QualifiedApiName='{targetobject}' LIMIT 1"
@@ -390,47 +528,50 @@ class NGOrgConfig(SFDXBaseTask):
         data = json.loads(response.text)
         self.logger.info(data["totalSize"])
         return data["totalSize"] == 1
-    
-    
+
+
     def _is_data_present_in_org(self, targetobject, filter,tooling=False):
         default = lambda o: f"<<non-serializable: {type(o).__qualname__}>>"
         org_config_json= json.dumps(self.org_config, default=default)
         self.logger.info(f"{os.listdir('.') }")
-        
+
         self.logger.info(f"_is_data_present_in_org::ttargetobject::{targetobject}::filter::{filter}")
-        
+
         url=""
         querytarget="query"
         if(tooling):
             querytarget="tooling/query"
-        
-        
+
+
         if(not filter is None):
             url = f"{self.instanceurl}/services/data/v56.0/{querytarget}/?q=select+Id+from+{targetobject}+where+({filter})"
         else:
             url = f"{self.instanceurl}/services/data/v56.0/{querytarget}/?q=select+Id+from+{targetobject}"
-            
+
         self.logger.info(f"url::{url}")
-        
+
         headers = {
             'Authorization': f'Bearer {self.accesstoken}',
             'Content-Type': 'application/json'
         }
         response = requests.request("GET", url, headers=headers)
-        
-        data = json.loads(response.text)
-        #self.logger.info(data)
-        self.logger.info(data["totalSize"])
-        return data["totalSize"] > 0
-        
-        
+
+        try:
+            data = json.loads(response.text)
+            #self.logger.info(data)
+            self.logger.info(data["totalSize"])
+            return data["totalSize"] > 0
+        except:
+            #fail closed
+            return False
+
         #fail closed
         return False
-    
-    
+
+
     def _is_psl_present_in_org(self, psl):
-        
-        #e.g. 
+
+        #e.g.
         #SELECT  id,MasterLabel,DeveloperName from PermissionSetLicense where (Masterlabel='OmniStudioDesigner' or DeveloperName='OmniStudioDesigner')
 
         url = f"{self.instanceurl}/services/data/v56.0/query/?q=select+Id+from+PermissionSetLicense+where+(Masterlabel='{psl}'+or+DeveloperName='{psl}')+LIMIT+1"
@@ -443,17 +584,17 @@ class NGOrgConfig(SFDXBaseTask):
         data = json.loads(response.text)
         self.logger.info(data["totalSize"])
         return data["totalSize"] == 1
-    
-    
-        
+
+
+
     def _is_psl_minimal_qty_available_in_org(self, psl, qty):
-        
-        #e.g. 
+
+        #e.g.
         #SELECT  id,MasterLabel,DeveloperName from PermissionSetLicense where (Masterlabel='OmniStudioDesigner' or DeveloperName='OmniStudioDesigner')
         #self.logger.info(psl)
         #self.logger.info(qty)
         #self.logger.info(type(qty))
-        
+
         url = f"{self.instanceurl}/services/data/v56.0/query/?q=select+Id,TotalLicenses,UsedLicenses+from+PermissionSetLicense+where+(Masterlabel='{psl}'+or+DeveloperName='{psl}')+LIMIT+1"
         headers = {
             'Authorization': f'Bearer {self.accesstoken}',
@@ -465,35 +606,35 @@ class NGOrgConfig(SFDXBaseTask):
         #self.logger.info(data["totalSize"])
         if data["totalSize"] == 0:
             return False
-        
+
         totalqty= data["records"][0]["TotalLicenses"]
         usedqty= data["records"][0]["UsedLicenses"]
-        
+
         #self.logger.info((totalqty-usedqty)>= qty)
         return (totalqty-usedqty) >= qty
-    
+
     def _is_bulk_check_psl_minimal_qty_available_in_org(self, srcfile):
-        
+
         #self.logger.info(f'Source File::{srcfile}')
         try:
-            
+
             #fail closed
             if(os.path.exists(srcfile)==False):
                 self.logger.error(f'PSL Bulk Check Source File not found::{srcfile}')
                 return False
-            
-            
+
+
             filehandle = open(srcfile,"r")
             filecontents = filehandle.read()
-            
+
             #self.logger.info(f'Source File Contents::{filecontents}')
-            
+
             #fail closed
             if(len(filecontents)==0):
                 return False
-            
+
             psldict = json.loads(filecontents)
-            
+
             for p in psldict.keys():
                 qty = psldict[p]
                 res = self._is_psl_minimal_qty_available_in_org(p,qty)
@@ -506,16 +647,16 @@ class NGOrgConfig(SFDXBaseTask):
             self.logger.error(f'Failure in bulk check. Failing closed. {e}')
             #fail closed
             return False
-               
-               
+
+
         #fail closed
         self.logger.error(f'Failing closed.')
         return False
-        
-    
+
+
     def _is_ps_present_in_org(self, ps):
-        
-        #e.g. 
+
+        #e.g.
         #SELECT  id,MasterLabel,DeveloperName from PermissionSet where (Name='OmniStudioDesigner' or Label='OmniStudioDesigner')
 
         url = f"{self.instanceurl}/services/data/v56.0/query/?q=select+Id+from+PermissionSet+where+(Name='{ps}'+or+Label='{ps}')+LIMIT+1"
@@ -528,25 +669,25 @@ class NGOrgConfig(SFDXBaseTask):
         data = json.loads(response.text)
         self.logger.info(data["totalSize"])
         return data["totalSize"] == 1
-    
-    
-    
+
+
+
     def _check_id_or_guid_in_org(self, identifier):
-    
+
         #fail closed sine the object or access to the object is not present
         try:
             return (self._check_org_id_exists(identifier) or self._check_org_guid_exists(identifier))
         except:
           self.logger.error("Lookup of org identifier or guid failed. failing closed.")
-            
+
         #fail closed sine the object or access to the object is not present
         return False
-    
-    #custom metadata does not support OR 
+
+    #custom metadata does not support OR
     def _check_org_id_exists(self, identifier):
-        
+
         try:
-            #e.g. 
+            #e.g.
             #SDO or GUID
             url = f"{self.instanceurl}/services/data/v56.0/query/?q=select+Id+from+QLabs__mdt+where+(Org_Type__c='{identifier}')+LIMIT+1"
             headers = {
@@ -560,15 +701,15 @@ class NGOrgConfig(SFDXBaseTask):
             return data["totalSize"] == 1
         except:
             self.logger.error("Lookup of org identifier failed. failing closed.")
-            
+
         #fail closed sine the object or access to the object is not present
         return False
-    
-     #custom metadata does not support OR 
+
+     #custom metadata does not support OR
     def _check_org_guid_exists(self, identifier):
-        
+
         try:
-            #e.g. 
+            #e.g.
             #SDO or GUID
             url = f"{self.instanceurl}/services/data/v56.0/query/?q=select+Id+from+QLabs__mdt+where+(Identifier__c='{identifier}')+LIMIT+1"
             headers = {
@@ -582,10 +723,10 @@ class NGOrgConfig(SFDXBaseTask):
             return data["totalSize"] == 1
         except:
             self.logger.error("Lookup of org guid failed. failing closed.")
-            
+
         #fail closed sine the object or access to the object is not present
         return False
-        
+
 
 
     def _get_org_max_api_version(self):
@@ -597,7 +738,7 @@ class NGOrgConfig(SFDXBaseTask):
         }
         response = requests.request("GET", url, headers=headers)
         data = json.loads(response.text)
-        
+
         return float(data[-1]['version'])
 
     def _run_task(self):
@@ -624,39 +765,34 @@ class NGCacheAdd(SFDXBaseTask):
             "required": False
         }
     }
-    
+
     def _init_options(self, kwargs):
         super(NGCacheAdd, self)._init_options(kwargs)
         self.env = self._get_env()
-        
-        
+
+
     def _prepruntime(self):
-        
+
         if "key" not in self.options or not self.options["key"]:
             raise Exception(f'No key provided to add to cache')
         else:
             self.key =self.options["key"]
-            
+
         if "value" not in self.options or not self.options["value"]:
             raise Exception(f'No key provided to add to cache')
         else:
             self.value =self.options["value"]
-        
+
     def _run_task(self):
         self._prepruntime()
-        
+
         if(self.value.startswith("${{") and self.value.endswith("}}")):
-            try:
-                sub1="${{"
-                sub2="}}"
-                idx1 = self.value.find(sub1)
-                idx2 = self.value.find(sub2)
-                exp = self.value[idx1 + len(sub1) + 1: idx2]
-                
+            try:                
+                exp = self.value[3:][:-2].strip()
                 #exit if inline import detected
                 if "__import__" in exp:
                     return
-                
+
                 compliledcode = compile(exp, "<string>", "eval")
                 #no builtins = no __import__ # DO NOT allow globals
                 #restrict scope to expression - no builtins and only locals self
@@ -666,7 +802,4 @@ class NGCacheAdd(SFDXBaseTask):
             except Exception as inst:
                 self.logger.error(f"Unable to evaluate dynamic express::{inst}")
         else:
-             ngorgconfig._cache_item_set(self.key,self.value)
-        
-        
-    
+            self.org_config.qbrix_cache_set(self.key,self.value)

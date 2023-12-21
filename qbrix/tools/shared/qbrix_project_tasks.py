@@ -1,33 +1,34 @@
 import datetime
 import filecmp
 import glob
-import json
+import logging
 import os
 import re
 import shutil
 import subprocess
-import yaml
+import xml
+import xml.etree.ElementTree as ET
 from io import BytesIO
 from os.path import exists
-import tempfile
 from typing import Optional
 from urllib.request import urlopen
-from zipfile import ZipFile
-import xml.etree.ElementTree as ET
 from xml.dom import minidom
+from zipfile import ZipFile
 
-from qbrix.tools.shared.qbrix_json_tasks import update_json_file_value, get_json_file_value, remove_json_entry
-from qbrix.tools.shared.qbrix_console_utils import init_logger
-from qbrix.tools.utils.qbrix_fart import FART
+import yaml
+
 from qbrix.tools.shared.qbrix_cci_tasks import rebuild_cci_cache
+from qbrix.tools.shared.qbrix_console_utils import init_logger
+from qbrix.tools.shared.qbrix_io_tasks import QBrixDirectoryTask, QbrixFileTask
+from qbrix.tools.shared.qbrix_json_tasks import JsonFileTask, OrgConfigFileTask
 from qbrix.tools.shared.qbrix_shared_checks import is_github_url
-
-log = init_logger()
+from qbrix.tools.utils.qbrix_fart import FART
 
 DEFAULT_UPDATE_LOCATION = "https://qbrix-core.herokuapp.com/qbrix/q_update_package.zip"
 
+log = init_logger()
 
-def replace_file_text(file_location, search_string, replacement_string, show_info=False, number_of_replacements=-1):
+def replace_file_text(file_location, search_string, replacement_string, show_info=False, number_of_replacements=-1, search_regex=False):
     """ Replaces a string value within a given file
 
     Args:
@@ -36,33 +37,35 @@ def replace_file_text(file_location, search_string, replacement_string, show_inf
         replacement_string (str): The replacement String value
         show_info (bool): When True, this will output information about the string value being modified.
         number_of_replacements (int): The total number of replacements to process, for example 1 would only replace the first instance of the search string in the file. Default is -1 which means replace all.
+        search_regex (bool): When True, it will do regex replace instead of plain string replace, with this set to be True, the number_of_replacements will be a bit different, coz in re.sub, the count 0 (instead of -1) means replace all
     """
 
-    if not os.path.isfile(file_location):
-        raise Exception(f"Error: File Path does not exist or you do not have access to the given file path. Please check this file path and update as required: {file_location}")
+    if show_info:
+        log.info("Checking %s...", file_location)
 
-    try:
-        if show_info:
-            log.info(f"Checking {file_location}...")
-        with open(f"{file_location}", "r") as tmpFile:
-            file_contents = tmpFile.read()
-    except Exception as e:
-        raise Exception(f"There was an error opening the file with path: {file_location}. Please check the file still exists and that you have access to read it. Error detail: {e}")
+    file_task = QbrixFileTask(file_location=file_location)
+    file_contents = file_task.get_file_contents()
 
-    if search_string not in file_contents:
+    if not file_contents:
+        return
+
+    # only do the pre replace check if it's not regex search
+    if (not search_regex) and (search_string not in file_contents):
         return
 
     if show_info:
-        log.info(f"Searching for all references to '{search_string}' and replacing with '{replacement_string}'.")
+        log_info = f" -> Searching for all references to '{search_string}' and replacing with '{replacement_string}'."
+        if search_regex:
+            log_info = log_info[:-1] + ", using regex."
+        log.info(log_info)
 
-    updated_file_contents = file_contents.replace(f"{search_string}", f"{replacement_string}", number_of_replacements)
+    if search_regex:
+        # notice the last arg, re.sub use count 0 instead of -1 for "replace all", so we need to do a bit tweak here
+        updated_file_contents = re.sub(search_string, replacement_string, file_contents, number_of_replacements if number_of_replacements > 0 else 0)
+    else:
+        updated_file_contents = file_contents.replace(search_string, replacement_string, number_of_replacements)
 
-    try:
-        with open(f"{file_location}", "w") as updated_file:
-            updated_file.seek(0)
-            updated_file.write(updated_file_contents)
-    except Exception as e:
-        raise Exception(f"There was an error updating the file with path: {file_location}. Please check the file still exists and that you have access to edit it. Error detail: {e}")
+    return file_task.update_file(updated_file_contents=updated_file_contents)
 
 
 def get_qbrix_repo_url() -> str:
@@ -83,39 +86,14 @@ def get_qbrix_repo_url() -> str:
         repo_url = input("Please Enter the complete URL for the Q brix Repo which should be linked to this project (e.g. https://www.github.com/sfdc-qbranch/Qbrix-1-repo): ")
 
         if repo_url == "" or repo_url is None:
-            raise Exception("No GitHub Repo URL was found or entered into the prompt.")
+            raise ValueError("No GitHub Repo URL was found or entered into the prompt.")
 
         if not is_github_url(repo_url):
-            raise Exception("URL Must be a valid Github.com URL to a Github repo.")
+            raise ValueError("URL Must be a valid Github.com URL to a Github repo.")
     else:
         repo_url = result.decode('utf-8').rstrip().replace(".git", "")
 
     return repo_url
-
-
-def advanced_feature_match(check_value, list_value):
-    """Checks for a given scratch org feature containing a : within a list of scratch org features. If the feature already exists, this return True
-    otherwise False is returned.
-
-    Args:
-        check_value (str): The string value of a scratch org feature to check
-        list_value (list(str)): The list of scratch org features to check against
-
-    Returns:
-        bool: True if match found in list, False if not
-    """
-
-    if ":" not in check_value:
-        log.debug("Feature was passed to advanced feature match which does not match format expected.")
-        return
-
-    chk = False
-    for substring in list_value:
-        if substring.split(":")[0] == check_value.split(":")[0]:
-            chk = True
-
-    return chk
-
 
 def check_and_delete_dir(dir_path):
     """Deletes a directory (and all contents) if it exists. Returns True if folder has been deleted.
@@ -132,18 +110,7 @@ def check_and_delete_dir(dir_path):
         log.info("Directory already appears to have been removed or does not exist.")
         return True
 
-    if not os.path.isdir(dir_path):
-        log.error(f"The given path ({dir_path}) is not a directory, stopping additional processing.")
-        return False
-
-    # Remove Directory and subdirectories
-    try:
-        shutil.rmtree(f"{dir_path}")
-        log.info(f"Deleted {dir_path} and related sub-directories and files (if any)")
-        return True
-    except Exception as e:
-        log.error(f"Unable to delete directory with path: {dir_path}. {e}")
-        return False
+    return QBrixDirectoryTask(dir_path).delete_directory()
 
 
 def check_and_delete_file(file_path):
@@ -156,272 +123,87 @@ def check_and_delete_file(file_path):
         bool: True if file has been deleted or did not exist, False if there was an issue.
     """
 
+    # If File already Removed return True
     if not os.path.exists(file_path):
         return True
 
-    if not os.path.isfile(file_path):
-        log.error(f"The File path provided ({file_path}) is not a valid path to a file. Stopping further processing")
-        return False
-
-    try:
-        os.remove(f"{file_path}")
-        log.info(f"File Deleted: {file_path}")
-        return True
-    except Exception as e:
-        log.error(f"Unable to delete file: {file_path}. {e}")
-        return False
-
-
-def update_org_file_features(file_location, missing_features, auto: Optional[bool] = False):
-    """Updates scratch org json file features with additional features.
-
-    Args:
-        file_location (str): Relative path to the scratch org json file.
-        missing_features (list(str)): List of scratch org features which are missing.
-        auto (bool): When True this does not ask the end user for confirmation to make changes.
-
-    Returns:
-        bool: True when the file has been updated or if there are no missing features to process.
-
-    """
-
-    if not os.path.exists(file_location):
-        log.error(f"The provided file path ({file_location}) does not exist.")
-        return False
-
-    if not os.path.isfile(file_location) or not str(file_location).endswith(".json"):
-        log.error(f"The provided file path ({file_location}) is not a valid json file.")
-        return False
-
-    if len(missing_features) == 0:
-        return True
-
-    if not auto:
-        get_response = input(f"Would you like to append missing features to your {file_location} file? (y/n) Default y: ") or 'y'
-    else:
-        get_response = 'y'
-
-    if get_response == 'y':
-        log.info(f"Updating: {file_location}")
-
-        try:
-            with open(file_location) as json_file:
-                json_file_data = json.load(json_file)
-
-            # Get Existing Feature List
-            current_features = json_file_data['features']
-            current_features = [x.lower() for x in current_features]
-
-            # De-Duplicate Feature Lists and Append to Clean List
-            clean_feature_list = []
-            for current_feature in current_features:
-                if (":" not in current_feature and not current_feature.lower() in clean_feature_list) or (":" in current_feature and not advanced_feature_match(current_feature.lower(), clean_feature_list)):
-                    clean_feature_list.append(current_feature.lower())
-
-            for missing_feature in missing_features:
-                if (":" not in missing_feature and not missing_feature.lower() in clean_feature_list) or (":" in missing_feature and not advanced_feature_match(missing_feature.lower(), clean_feature_list)):
-                    clean_feature_list.append(missing_feature.lower())
-
-            clean_feature_list.sort()
-
-            # Update File
-            json_file_data['features'] = clean_feature_list
-            with open(file_location, "w") as nFile:
-                json.dump(json_file_data, nFile, indent=2)
-
-            log.info(f"Updated features in file: {file_location}")
-
-            return True
-        except Exception as e:
-            log.error(f"[ERROR] Unable to update features in file: {file_location}. Error Message: {e}")
-            return False
-
-
-def find_missing_features(main_features_file, check_features_file):
-    """Compares two json scratch org definition files and checks the main file has all the features which the
-    check file has. You can then optionally update the current project file with missing features.
-
-        Args:
-            main_features_file (str): Relative path to the scratch org json file which will be updated.
-            check_features_file (str): Relative path to the scratch org json file which be used to compare to.
-
-        Returns:
-            list(str): List of missing scratch org features
-
-    """
-
-    if not os.path.exists(main_features_file):
-        raise Exception(f"The provided file path for the Main File, located at ({main_features_file}), does not exist.")
-
-    if not os.path.exists(check_features_file):
-        raise Exception(f"The provided file path for the Comparison File, located at ({check_features_file}), does not exist.")
-
-    log.info(f"Feature Check: Comparing {main_features_file} to {check_features_file}")
-
-    # Init Missing Features List
-    missing_features = []
-
-    try:
-        # Load Main File
-        with open(main_features_file) as main_json_file:
-            main_json_file_data = json.load(main_json_file)
-
-        if not main_json_file_data['features']:
-            raise Exception(f"[ERROR] No features found in file: {main_json_file}. Check the file and try again.")
-
-        main_comparison_list = main_json_file_data['features']
-        main_comparison_list = [x.lower() for x in main_comparison_list]
-
-        # Load Comparison File
-        with open(check_features_file) as check_json_file:
-            check_json_file_data = json.load(check_json_file)
-
-        if check_json_file_data['features'] is None:
-            raise Exception(f"[ERROR] No features found in file: {check_json_file}. Check the file and try again.")
-
-        check_comparison_list = check_json_file_data['features']
-        check_comparison_list = [x.lower() for x in check_comparison_list]
-
-        # Compare both lists and populate missing list
-        missing_feature_count = 0
-        for missing_feature in check_comparison_list:
-            add_feature = False
-
-            # Separate out features which contain a :
-            if ":" in missing_feature:
-                if not advanced_feature_match(missing_feature.lower(), main_comparison_list):
-                    add_feature = True
-            else:
-                if not missing_feature.lower() in main_comparison_list:
-                    add_feature = True
-
-            if add_feature:
-                missing_features.append(missing_feature.lower())
-                missing_feature_count += 1
-
-        if len(missing_features) == 0:
-            log.info(f"[OK] There are no missing features found when comparing to file: {check_features_file}")
-        else:
-            log.info(f"{missing_feature_count} missing feature(s) found, when comparing to file: {check_features_file}")
-            missing_features.sort()
-
-        return missing_features
-
-    except Exception as e:
-        raise Exception(f"[ERROR] Failed to compare files. {e}")
-
+    return QbrixFileTask(file_path).delete_file()
 
 def check_org_config_files(auto=False):
-    """Checks the orgs/dev.json and orgs/dev_preview.json file for key settings
+    """Checks the orgs/dev.json and orgs/dev_preview.json file for key parameters
 
         Args:
             auto (bool): Optional parameter to set the checker to automatically update errors when they are found.
 
     """
 
+    org_config_files = [
+        "orgs/dev.json",
+        "orgs/dev_preview.json"
+    ]
+
     log.info("Scratch Org File Check: Checking your org config files for issues")
-    error_found = False
 
-    if not os.path.exists("orgs/dev.json"):
-        raise Exception(f"The provided file path for the dev scratch org definition file, located at (orgs/dev.json), does not exist.")
+    for config_file in org_config_files:
+        current_file = JsonFileTask(config_file)
 
-    if not os.path.exists("orgs/dev_preview.json"):
-        raise Exception(f"The provided file path for the dev scratch org definition file, located at (orgs/dev_preview.json), does not exist.")
+        file_edition = current_file.get_json_value("edition") or ""
+        file_instance = current_file.get_json_value("instance") or ""
 
-    for scratch_config_file in ('orgs/dev.json', 'orgs/dev_preview.json'):
-        # Check for "Enterprise" or "Partner Enterprise" edition in scratch org definition
-        current_edition = get_json_file_value(scratch_config_file, "edition")
-
-        if current_edition and "enterprise" not in current_edition.lower():
-            log.info(f"Scratch Org File Check: [FAIL] Your {scratch_config_file} file is not set to Enterprise edition.")
-            error_found = True
+        # Edition Check
+        if file_edition != "" and "enterprise" in file_edition.lower():
+            edition_update = None
             if not auto:
-                update_dev_input = input("\n\nWould you like to update the dev.json file edition? (y/n) Default y: ") or 'y'
-            else:
-                update_dev_input = 'y'
-            if update_dev_input == 'y':
-                update_json_file_value('orgs/dev.json', 'edition', 'Enterprise')
-                log.info(f"Scratch Org File Check: Updated {scratch_config_file} to use Enterprise Edition")
+                edition_update = input("Edition not set to 'Enterprise'. Would you like to fix it? (Y/n) ") or 'y'
+            if (edition_update and edition_update.lower() == 'y') or auto:
+                current_file.update_value("edition", "Enterprise")
 
-    instance = get_json_file_value("orgs/dev_preview.json", "instance") or ""
-    if "na135" not in instance.lower():
-        log.error(
-            "Scratch Org File Check: [FAIL] Your org/dev_preview.json file is not set to the NA135 Instance.")
-        error_found = True
-        if not auto:
-            update_dev_input = input(
-                "\n\nWould you like to update the dev_preview.json file instance? (y/n) Default y: ") or 'y'
-        else:
-            update_dev_input = 'y'
-        if update_dev_input == 'y':
-            update_json_file_value('orgs/dev_preview.json', 'instance', 'NA135')
-            remove_json_entry('orgs/dev_preview.json', 'release')
-
-    if not error_found:
-        log.info("Scratch Org File Check: [OK] All files have passed checks")
+        # NA135 Instance Check (Preview Only)
+        if file_instance != "" and "preview" in config_file.lower() and "NA135" not in file_instance:
+            instance_update = None
+            if not auto:
+                instance_update = input("Preview file found using an instance other than NA135. Would you like to fix it? (Y/n) ") or 'y'
+            if (instance_update and instance_update.lower() == 'y') or auto:
+                current_file.update_value("instance", "NA135")
 
 
 def check_api_versions(project_api_version):
-    """Checks API Versions within the project are all in sync with cumulusci.yml file api version
+    """
+    Checks API Versions within the project are all in sync with cumulusci.yml file api version
 
-            Args:
-                project_api_version (str): Current Project API version, defined in cumulusci.yml file.
+    Args:
+        project_api_version (str): Current Project API version, defined in cumulusci.yml file.
 
     """
 
-    log.info(f"API Version Check: Checking File API Versions are set to v{project_api_version}")
+    log.info("API Version Check: Checking File API Versions are set to v%s", project_api_version)
 
-    # Check and Update sfdx-project.json File
-    sfdx_version = get_json_file_value("sfdx-project.json", "sourceApiVersion")
-    if project_api_version != sfdx_version:
-        update_json_file_value("sfdx-project.json", "sourceApiVersion", project_api_version)
-        log.info("API Version Check: Updated sfdx-project.json File")
+    sfdx_file = JsonFileTask("sfdx-project.json")
+    if sfdx_file.get_json_value("sourceApiVersion") != project_api_version:
+        sfdx_file.update_value("sourceApiVersion", project_api_version)
+        log.info(" -> Updated sfdx-project.json File")
 
+def source_org_feature_checker():
+    """Check all source project org config files for missing features from current project config files"""
 
-def source_org_feature_checker(skip_rebuild=False, auto=False):
-    """Check all source project dev.json files for missing features from current project dev.json file
+    org_config_files = [
+        ("orgs/dev.json", "dev"),
+        ("orgs/dev_preview.json", "dev_preview")
+    ]
 
-        Args:
-            skip_rebuild (bool): Skips the rebuild step. Typically only used for testing purposes.
-            auto (bool): Optional parameter to set the checker to automatically update errors when they are found.
-    """
+    build_cache_skip = False
+    for org_file, org_name in org_config_files:
+        log.info(" -> Checking that all source %s.json file features are listed in the current orgs/%s.json file", org_name, org_name)
+        if os.path.exists(org_file):
+            OrgConfigFileTask(org_file, org_name, build_cache_skip).merge_source_features()
+        build_cache_skip = True
 
-    log.info("Source Feature Check: Checking that all source dev.json file features are listed in the current orgs/dev.json file")
-
-    # Prepare Project File
-    if not skip_rebuild:
-        clean_project_files()
-        rebuild_cci_cache()
-    else:
-        log.info("Cache Rebuild Skipped")
-
-    # Locate all dev.json files in CCI Cache
-    dev_files = glob.glob(".cci/projects" + "/**/dev.json", recursive=True)
-
-    # Check for missing features and add them to dev.json
-    main_missing_feature_list = []
-    for feature_check_file in dev_files:
-        missing_feature_list = find_missing_features("orgs/dev.json", feature_check_file)
-        if missing_feature_list is not None and len(missing_feature_list) > 0:
-            main_missing_feature_list.extend(missing_feature_list)
-    if len(main_missing_feature_list) > 0:
-        main_missing_feature_list.sort()
-        update_org_file_features("orgs/dev.json", main_missing_feature_list, auto)
-    else:
-        log.info("Source Feature Check: No missing features found when comparing all sources to orgs/dev.json")
-
-
-def org_feature_checker(auto=False):
+def org_feature_checker():
     """ Checks and updates the dev_preview.json file with missing features from the dev.json file """
 
-    log.info(
-        "Scratch Org Config Check: Comparing dev.json and dev_preview.json files for missing features.")
-    missing_features = find_missing_features("orgs/dev_preview.json", "orgs/dev.json")
-    if len(missing_features) > 0:
-        log.info("Scratch Org Config Check: Missing Features Found. Updating orgs/dev_preview.json file")
-        update_org_file_features("orgs/dev_preview.json", missing_features, auto)
-    else:
-        log.info("Scratch Org Config Check: No Missing Features Found")
+    current_file = OrgConfigFileTask("orgs/dev_preview.json")
+    current_file.merge_features_from("orgs/dev.json")
+    current_file.merge_settings_from("orgs/dev.json")
 
 
 def check_for_missing_files():
@@ -634,6 +416,28 @@ def update_file_api_versions(project_api_version) -> bool:
     return True
 
 
+def update_project_api_versions(new_api_version, old_api_version, target_org_alias, skip_deploy):
+
+    """Automates the update project process"""
+
+    if not new_api_version:
+        log.error("No new API version provided. Skipping task.")
+        return False
+
+    # deploy qbrix to scratch org, well if skip deploy is not "y"
+    if skip_deploy.lower() != "y":
+        log.info(f" ... deploying qbrix to org {target_org_alias}, please be patient, results will show when it's done, depends on how large your qbrix is, this process could take mintues to hours")
+        deploy_output, deploy_error = run_command(f"cci flow run deploy_qbrix --org {target_org_alias}")
+        log.info(deploy_output)
+
+    log.info(f" ... retrieving metadata in api version {new_api_version}, please be patient, results will show when it's done, this should be much quicker than the deploy command")
+    pull_output, pull_error = run_command(f"cci task run dx --command 'force:source:retrieve -p force-app -a {new_api_version}' --org {target_org_alias}")
+    log.info(pull_output)
+    replace_file_text("cumulusci.yml", f"api_version: \"{old_api_version}\"", f"api_version: \"{new_api_version}\"")
+
+    check_api_versions(new_api_version)
+
+
 def upsert_gitignore_entries(list_entries) -> bool:
     """
     Upserts a list of given gitignore patterns in the .gitignore file within the project. Each pattern is checked and if it is missing, it is added. If it exists but has been commented out, it will uncomment it.
@@ -651,9 +455,7 @@ def upsert_gitignore_entries(list_entries) -> bool:
     if not os.path.exists(".gitignore"):
         return False
 
-    log.info("Checking .gitignore File")
-
-    with open(".gitignore", 'a+') as git_file:
+    with open(".gitignore", 'a+', encoding="utf-8") as git_file:
         git_file.seek(0)
         content = git_file.read()
 
@@ -668,11 +470,13 @@ def check_permset_group_files():
     """
     Checks Permission Set Group Metadata Files and ensures they are set as 'Outdated'. This ensures they are recalculated upon deployment to an org.
     """
-    psg_files = glob.glob("force-app/main/default/permissionsetgroups/**/*.permissionsetgroup-meta.xml", recursive=True)
+
+    logger = logging.getLogger(__name__)
+    psg_files = glob.glob(os.path.normpath("force-app/main/default/permissionsetgroups/*.permissionsetgroup-meta.xml"), recursive=False)
     if len(psg_files) > 0:
-        log.info("Checking Permission Set Group File(s)")
+        logger.info("Checking Permission Set Group File(s)")
         for psg in psg_files:
-            log.info(f"Checking {psg} file configuration.")
+            logger.info(" -> Checking %s file configuration.", psg)
             FART.fartbetween(FART, psg, "<status>", "</status>", "Outdated", None)
 
 
@@ -697,11 +501,10 @@ def update_references(old_value, new_value, prefix=''):
     if old_value == new_value:
         return
 
-    project_path = 'force-app/main/default'
     reference_pattern = re.compile(rf'(?<!{prefix})\b{old_value}\b')
 
     for project_path in ["force-app/main/default", "unpackaged/pre", "unpackaged/post"]:
-        for root, dirs, files in os.walk(project_path):
+        for root, _, files in os.walk(project_path):
             for file_name in files:
                 if "external_id" in os.path.basename(file_name).lower() or os.path.basename(file_name).lower().startswith("sdo_") or os.path.basename(file_name).lower().startswith("xdo_") or os.path.basename(file_name).lower().startswith("db_"):
                     continue
@@ -854,7 +657,7 @@ def assign_prefix_to_files(prefix, parent_folder='force-app/main/default', inter
         print(f"FILE OR FOLDER RENAMED:\n    Previous Path: {path_to_update}\n    New Path: {new_updated_path}")
 
 
-def create_external_id_field(file_path: str = None):
+def create_external_id_field(file_path: str = None, object_list = None):
     """
     Creates External ID Fields for a given list of Object Names. If no file is provided, this will generate External ID fields on all objects within the current project directory.
 
@@ -862,40 +665,37 @@ def create_external_id_field(file_path: str = None):
         file_path (str): Relative Path within Project to a .txt file containing a list of objects to process. If not provided, will generate a list of objects from the current project.
     """
 
-    object_list = []
+    if not object_list:
+        object_list = set()
 
-    if file_path:
-        with open(file_path) as file:
-            for line in file:
-                if line and len(line) > 1:
-                    object_list.append(line.strip())
+    if file_path and os.path.exists(file_path):
+        with open(file_path, encoding="utf-8") as object_file:
+            object_list = set(line.strip() for line in object_file if line.strip())
     else:
-        for obj in os.listdir("force-app/main/default/objects"):
-            object_list.append(obj)
+        object_path = os.path.normpath("force-app/main/default/objects")
+        if os.path.exists(object_path):
+            object_list = set(obj for obj in os.listdir(object_path) if os.path.isdir(os.path.join(object_path, obj)))
 
     if len(object_list) > 0:
         for project_object in object_list:
-            if project_object:
-                object_dir = os.path.join("force-app", "main", "default", "objects", project_object)
-                fields_dir = os.path.join(object_dir, "fields")
-                field_file = os.path.join(fields_dir, "External_ID__c.field-meta.xml")
-                if not os.path.exists(object_dir):
-                    os.makedirs(object_dir)
-                if not os.path.exists(fields_dir):
-                    os.makedirs(fields_dir)
-                if not os.path.exists(field_file):
-                    with open(field_file, "w") as f:
-                        f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
-                        f.write('<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">\n')
-                        f.write('    <fullName>External_ID__c</fullName>\n')
-                        f.write('    <externalId>true</externalId>\n')
-                        f.write('    <label>External ID</label>\n')
-                        f.write('    <length>50</length>\n')
-                        f.write('    <required>false</required>\n')
-                        f.write('    <trackTrending>false</trackTrending>\n')
-                        f.write('    <type>Text</type>\n')
-                        f.write('    <unique>false</unique>\n')
-                        f.write('</CustomField>\n')
+            object_dir = os.path.join("force-app", "main", "default", "objects", project_object)
+            os.makedirs(object_dir, exist_ok=True)
+            fields_dir = os.path.join(object_dir, "fields")
+            os.makedirs(fields_dir, exist_ok=True)
+            field_file = os.path.join(fields_dir, "External_ID__c.field-meta.xml")
+            if not os.path.exists(field_file):
+                with open(field_file, "w", encoding="utf-8") as f:
+                    f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
+                    f.write('<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">\n')
+                    f.write('    <fullName>External_ID__c</fullName>\n')
+                    f.write('    <externalId>true</externalId>\n')
+                    f.write('    <label>External ID</label>\n')
+                    f.write('    <length>50</length>\n')
+                    f.write('    <required>false</required>\n')
+                    f.write('    <trackTrending>false</trackTrending>\n')
+                    f.write('    <type>Text</type>\n')
+                    f.write('    <unique>false</unique>\n')
+                    f.write('</CustomField>\n')
 
 
 def run_command(command, cwd="."):
@@ -983,150 +783,410 @@ def push_changes(target_org_alias):
     log.info("Upgrade Pushed!")
     return push_output
 
+def get_existing_entries(permission_set_file_path):
 
-def create_permission_set_file(name, label):
+    ET.register_namespace('', "http://soap.sforce.com/2006/04/metadata")
+
+    # Define a dictionary to track existing entries
+    existing_entries = {
+        "applicationVisibilities": [],
+        "classAccesses": [],
+        "customMetadataTypeAccesses": [],
+        "customPermissions": [],
+        "customSettingAccesses": [],
+        "externalDataSourceAccesses": [],
+        "fieldPermissions": [],
+        "flowAccesses": [],
+        "objectPermissions": [],
+        "pageAccesses": [],
+        "recordTypeVisibilities": [],
+        "tabSettings": [],
+        "userPermissions": []
+    }
+
+    # Parse the existing XML file if it exists
+    if os.path.exists(permission_set_file_path):
+        print("Existing File Mode")
+        with open(permission_set_file_path, "rb") as file:
+            try:
+                existing_tree = xml.etree.ElementTree.parse(file)
+                salesforce_namespace_map = {'': "http://soap.sforce.com/2006/04/metadata"}
+                for entry in existing_entries.keys():
+                    elements = existing_tree.findall('.//'+entry, namespaces=salesforce_namespace_map)
+                    for element in elements:
+                        existing_entries[entry].append(element)
+            except Exception as e:
+                print(e)
+                print("Ignoring Error and rebuilding Permission Set File")
+        os.remove(permission_set_file_path)
+
+    return existing_entries
+
+
+def create_permission_set_file(name, label, permission_set_path=None, run_as_upsert=True):
     """
-    Creates a Permission Set from the current Project.
+    Creates or updates a Permission Set in the XML file.
 
     Args:
         name (str): The Name for the Permission Set File
         label (str): The label for the Permission Set
     """
 
-    if os.path.exists(f"force-app/main/default/permissionsets/{name}.permissionset-meta.xml"):
-        os.remove(f"force-app/main/default/permissionsets/{name}.permissionset-meta.xml")
+    if not permission_set_path:
+        permissionset_path = os.path.join("force-app", "main", "default", "permissionsets", f"{name}.permissionset-meta.xml")
+    else:
+        permissionset_path = os.path.join(permission_set_path, f"{name}.permissionset-meta.xml")
 
+    if not run_as_upsert and os.path.exists(permissionset_path):
+        os.remove(permissionset_path)
+
+    ET.register_namespace('', "http://soap.sforce.com/2006/04/metadata")
+
+    # Get Dict of Access Types
+    # Note for developers, Permission Sets require all types of access, e.g. customMetadataTypeAccesses to be grouped together in the resulting file
+    existing_entries = get_existing_entries(permission_set_file_path=permissionset_path)
+
+    # Create or update the root element
+    root = ET.Element("PermissionSet")
+
+    # Set the label
     # Adjust long labels to the max length
     if len(label) > 80:
         log.info("Adjusted label length as you have passed in a permission set label name which is more than 80 characters.")
         label = label[:80]
-
-    # Create the root element
-    root = ET.Element("PermissionSet", attrib={"xmlns": "http://soap.sforce.com/2006/04/metadata"})
-
-    # Set the label
     label_element = ET.SubElement(root, "label")
     label_element.text = label
 
-    # NOTE FOR DEVS - The Traversal of objects and fields needs to ensure that the resulting tree has all types grouped together, i.e. all object references, all fields references then all record types. Hence the strange order of execution below.
 
-    # Traverse through the object folders
-    object_lookup_list = []
-    objects_path = "force-app/main/default/objects"
+
+    # APPLICATION ACCESS
+
+    # Handle Existing Access if any
+    if len(existing_entries["applicationVisibilities"]) > 0:
+        for existing_app_permission in existing_entries["applicationVisibilities"]:
+            root.append(existing_app_permission)
+
+    # Handle New or Additional Access
+    apps_path = "force-app/main/default/applications"
+    if os.path.exists(apps_path):
+        for apps_file in sorted(os.listdir(apps_path)):
+            if apps_file.endswith(".app-meta.xml"):
+                app_name = apps_file[:-13]
+                app_permissions_element = find_existing_entry(existing_entries["applicationVisibilities"], "application", app_name)
+                if app_permissions_element is None:
+                    app_permissions_element = ET.SubElement(root, "applicationVisibilities")
+                    ET.SubElement(app_permissions_element, "application").text = app_name
+                    ET.SubElement(app_permissions_element, "visible").text = "true"
+
+
+
+    # APEX Class Access
+
+    # Handle Existing Access if any
+    if len(existing_entries["classAccesses"]) > 0:
+        for existing_ac_permission in existing_entries["classAccesses"]:
+            root.append(existing_ac_permission)
+
+    # Handle New or Additional Access
+    classes_path = "force-app/main/default/classes"
+    if os.path.exists(classes_path):
+        for class_file in sorted(os.listdir(classes_path)):
+            if class_file.endswith(".cls"):
+                class_name = class_file[:-4]
+                class_permissions_element = find_existing_entry(existing_entries["classAccesses"], "apexClass", class_name)
+                if class_permissions_element is None:
+                    class_permissions_element = ET.SubElement(root, "classAccesses")
+                    ET.SubElement(class_permissions_element, "apexClass").text = class_name
+                    ET.SubElement(class_permissions_element, "enabled").text = "true"
+
+
+
+    # CUSTOM METADATA ACCESS
+
+    # Handle Existing Access if any
+    if len(existing_entries["customMetadataTypeAccesses"]) > 0:
+        for existing_permission in existing_entries["customMetadataTypeAccesses"]:
+            root.append(existing_permission)
+
+    # Handle New or Additional Access
+    custom_md_path = "force-app/main/default/customMetadata"
+    if os.path.exists(custom_md_path):
+        for custom_md_file in sorted(os.listdir(custom_md_path)):
+            if custom_md_file.endswith(".md-meta.xml"):
+                md_file_name = os.path.basename(custom_md_file)
+                md_name = md_file_name.split(".")[0]
+                md_name += "__mdt"
+                md_permissions_element = find_existing_entry(existing_entries["customMetadataTypeAccesses"], "name", md_name)
+                if md_permissions_element is None:
+                    md_permissions_element = ET.SubElement(root, "customMetadataTypeAccesses")
+                    ET.SubElement(md_permissions_element, "name").text = md_name
+                    ET.SubElement(md_permissions_element, "enabled").text = "true"
+
+
+
+    # CUSTOM PERMISSIONS
+
+    # Handle Existing Access if any
+    if len(existing_entries["customPermissions"]) > 0:
+        for existing_permission in existing_entries["customPermissions"]:
+            root.append(existing_permission)
+
+    # Handle New or Additional Access
+    # TODO
+
+
+
+    # CUSTOM SETTING ACCESS
+
+    # Handle Existing Access if any
+    if len(existing_entries["customSettingAccesses"]) > 0:
+        for existing_permission in existing_entries["customSettingAccesses"]:
+            root.append(existing_permission)
+
+    # Handle New or Additional Access
+    # TODO
+
+
+
+    # EXTERNAL DATASOURCE ACCESS
+
+    # Handle Existing Access if any
+    if len(existing_entries["externalDataSourceAccesses"]) > 0:
+        for existing_permission in existing_entries["externalDataSourceAccesses"]:
+            root.append(existing_permission)
+
+    # Handle New or Additional Access
+    # TODO
+
+
+
+    # object path needed later for field, object and recordtype
+    objects_path = os.path.join("force-app", "main", "default", "objects")
+
+
+
+    # FIELD PERMISSIONS
+
+    # Add Existing Entries, if any
+    if len(existing_entries["fieldPermissions"]) > 0:
+        for existing_field_permission in existing_entries["fieldPermissions"]:
+            root.append(existing_field_permission)
+
+    # Check for New or Additional Entries and add them
     if os.path.exists(objects_path):
-        for object_folder in os.listdir(objects_path):
+        for object_folder in sorted(os.listdir(objects_path)):
             object_folder_path = os.path.join(objects_path, object_folder)
             if os.path.isdir(object_folder_path):
-                # Add object permissions
-                object_permissions_element = ET.SubElement(root, "objectPermissions")
-                ET.SubElement(object_permissions_element, "allowCreate").text = "true"
-                ET.SubElement(object_permissions_element, "allowDelete").text = "true"
-                ET.SubElement(object_permissions_element, "allowEdit").text = "true"
-                ET.SubElement(object_permissions_element, "allowRead").text = "true"
-                ET.SubElement(object_permissions_element, "modifyAllRecords").text = "true"
-                ET.SubElement(object_permissions_element, "object").text = f"{object_folder}"
-                ET.SubElement(object_permissions_element, "viewAllRecords").text = "true"
-
-                # Traverse through the field folders
                 fields_folder_path = os.path.join(object_folder_path, "fields")
                 if os.path.isdir(fields_folder_path):
-                    for field_file in os.listdir(fields_folder_path):
-                        # # Add object permissions for lookup fields that reference objects not in the project
-                        field_path = os.path.join(fields_folder_path, field_file)
-                        with open(field_path, "r") as file:
-                            contents = file.read()
-                            reference_to_start = contents.find("<referenceTo>")
-                            reference_to_end = contents.find("</referenceTo>")
-                            if reference_to_start != -1 and reference_to_end != -1:
-                                reference_object = contents[reference_to_start + 13:reference_to_end]
-                                if reference_object not in os.listdir(objects_path) and reference_object not in object_lookup_list:
-                                    object_permissions_element = ET.SubElement(root, "objectPermissions")
-                                    ET.SubElement(object_permissions_element, "allowCreate").text = "true"
-                                    ET.SubElement(object_permissions_element, "allowDelete").text = "true"
-                                    ET.SubElement(object_permissions_element, "allowEdit").text = "true"
-                                    ET.SubElement(object_permissions_element, "allowRead").text = "true"
-                                    ET.SubElement(object_permissions_element, "modifyAllRecords").text = "true"
-                                    ET.SubElement(object_permissions_element, "object").text = f"{reference_object}"
-                                    ET.SubElement(object_permissions_element, "viewAllRecords").text = "true"
-                                    object_lookup_list.append(reference_object)
+                    for field_file in sorted(os.listdir(fields_folder_path)):
 
-    # Traverse Field Names
-    if os.path.exists(objects_path):
-        for object_folder in os.listdir(objects_path):
-            object_folder_path = os.path.join(objects_path, object_folder)
-            if os.path.isdir(object_folder_path):
-                # Traverse through the field folders
-                fields_folder_path = os.path.join(object_folder_path, "fields")
-                if os.path.isdir(fields_folder_path):
-                    for field_file in os.listdir(fields_folder_path):
                         # Read File and skip MasterDetail and Formula Fields
                         with open(os.path.join(fields_folder_path, field_file), "r") as file:
                             contents = file.read()
                             formula_reference_to_start = contents.find("<formula>")
                             md_reference_to_start = contents.find("<type>MasterDetail</type>")
                             req_reference_to_start = contents.find("<required>true</required>")
-                        # Add Field to the tree
-                        if field_file.endswith(".field-meta.xml") and formula_reference_to_start == -1 and md_reference_to_start == -1 and req_reference_to_start == -1:
-                            field_name = field_file[:-15]
+
+                        if formula_reference_to_start > -1 or md_reference_to_start > -1 or req_reference_to_start > -1:
+                            continue
+
+                        field_name = field_file[:-15]
+                        field_key = f"{object_folder}.{field_name}"
+                        field_permissions_element = find_existing_entry(existing_entries["fieldPermissions"], "field", field_key)
+                        if field_permissions_element is None:
                             field_permissions_element = ET.SubElement(root, "fieldPermissions")
                             ET.SubElement(field_permissions_element, "editable").text = "true"
-                            ET.SubElement(field_permissions_element, "field").text = f"{object_folder}.{field_name}"
+                            ET.SubElement(field_permissions_element, "field").text = field_key
                             ET.SubElement(field_permissions_element, "readable").text = "true"
 
-    # Traverse Record Types
+    # FLOW ACCESS
+
+    # Handle Existing Access if any
+    if len(existing_entries["flowAccesses"]) > 0:
+        for existing_permission in existing_entries["flowAccesses"]:
+            root.append(existing_permission)
+
+    # Handle New or Additional Access
+    flows_path = "force-app/main/default/flows"
+    if os.path.exists(flows_path):
+        for flow_file in sorted(os.listdir(flows_path)):
+            if flow_file.endswith(".flow-meta.xml"):
+                flow_name = flow_file[:-14]
+                flow_permissions_element = find_existing_entry(existing_entries["flowAccesses"], "flow", flow_name)
+                if flow_permissions_element is None:
+                    flow_permissions_element = ET.SubElement(root, "flowAccesses")
+                    ET.SubElement(flow_permissions_element, "flow").text = flow_name
+                    ET.SubElement(flow_permissions_element, "enabled").text = "true"
+
+
+
+    # OBJECT PERMISSIONS
+
+    # Handle Any Existing Entries
+    if len(existing_entries["objectPermissions"]) > 0:
+        for existing_object_permission in existing_entries["objectPermissions"]:
+            root.append(existing_object_permission)
+
+    # Check for additional or new entries
+    objects_set = set()
     if os.path.exists(objects_path):
-        for object_folder in os.listdir(objects_path):
+        for object_name in sorted(os.listdir(objects_path)):
+
+            if object_name == '.DS_Store':
+                continue
+
+            # Add Object Dir to Set
+            objects_set.add(object_name)
+
+            # Add object permissions for lookup fields that reference objects not in the project
+            fields_folder_path = os.path.join(objects_path, object_name, "fields")
+            if os.path.isdir(fields_folder_path):
+                for field_file in sorted(os.listdir(fields_folder_path)):
+                    field_path = os.path.join(fields_folder_path, field_file)
+                    with open(field_path, "r") as file:
+                        contents = file.read()
+                        reference_to_start = contents.find("<referenceTo>")
+                        reference_to_end = contents.find("</referenceTo>")
+                        if reference_to_start != -1 and reference_to_end != -1:
+                            reference_object = contents[reference_to_start + 13:reference_to_end]
+                            objects_set.add(reference_object)
+
+        # Create Entries for any missing ObjectPermissions
+        for obj in objects_set:
+            object_permissions_element = find_existing_entry(existing_entries["objectPermissions"], "object", obj)
+            if object_permissions_element is None:
+                print(f" -> Adding New Entry for {obj}")
+                object_permissions_element = ET.SubElement(root, "objectPermissions")
+                ET.SubElement(object_permissions_element, "allowCreate").text = "true"
+                ET.SubElement(object_permissions_element, "allowDelete").text = "true"
+                ET.SubElement(object_permissions_element, "allowEdit").text = "true"
+                ET.SubElement(object_permissions_element, "allowRead").text = "true"
+                ET.SubElement(object_permissions_element, "modifyAllRecords").text = "true"
+                ET.SubElement(object_permissions_element, "object").text = obj
+                ET.SubElement(object_permissions_element, "viewAllRecords").text = "true"
+
+
+
+    # APEX PAGE VISUALFORCE PERMISSIONS
+
+    # Handle Existing Access if any
+    if len(existing_entries["pageAccesses"]) > 0:
+        for existing_permission in existing_entries["pageAccesses"]:
+            root.append(existing_permission)
+
+
+    # Handle New or Additional Access
+    pages_path = "force-app/main/default/pages"
+    if os.path.exists(pages_path):
+        for page_file in os.listdir(pages_path):
+            if page_file.endswith(".page-meta.xml"):
+                page_file = page_file[:-14]
+                page_permissions_element = find_existing_entry(existing_entries["pageAccesses"], "apexPage", page_file)
+                if page_permissions_element is None:
+                    page_permissions_element = ET.SubElement(root, "pageAccesses")
+                    ET.SubElement(page_permissions_element, "apexPage").text = page_file
+                    ET.SubElement(page_permissions_element, "enabled").text = "true"
+
+
+
+    # RECORD TYPE ACCESS
+
+    # Handle Existing Access if any
+    if len(existing_entries["recordTypeVisibilities"]) > 0:
+        for existing_rt_permission in existing_entries["recordTypeVisibilities"]:
+            root.append(existing_rt_permission)
+
+    # Handle New or Additional Access
+    if os.path.exists(objects_path):
+        for object_folder in sorted(os.listdir(objects_path)):
             object_folder_path = os.path.join(objects_path, object_folder)
             if os.path.isdir(object_folder_path):
                 record_types_folder_path = os.path.join(object_folder_path, "recordTypes")
                 if os.path.isdir(record_types_folder_path):
-                    for record_type_file in os.listdir(record_types_folder_path):
+                    for record_type_file in sorted(os.listdir(record_types_folder_path)):
                         if record_type_file.endswith(".recordType-meta.xml"):
                             record_type_name = record_type_file[:-20]
-                            record_type_permissions_element = ET.SubElement(root, "recordTypeVisibilities")
-                            ET.SubElement(record_type_permissions_element, "recordType").text = f"{object_folder}.{record_type_name}"
-                            ET.SubElement(record_type_permissions_element, "visible").text = "true"
+                            record_type_key = f"{object_folder}.{record_type_name}"
+                            record_type_permissions_element = find_existing_entry(existing_entries["recordTypeVisibilities"], "recordType", record_type_key)
+                            if record_type_permissions_element is None:
+                                record_type_permissions_element = ET.SubElement(root, "recordTypeVisibilities")
+                                ET.SubElement(record_type_permissions_element, "recordType").text = record_type_key
+                                ET.SubElement(record_type_permissions_element, "visible").text = "true"
 
-    # Traverse through the Apex class files
-    classes_path = "force-app/main/default/classes"
-    if os.path.exists(classes_path):
-        for class_file in os.listdir(classes_path):
-            if class_file.endswith(".cls"):
-                class_name = class_file[:-4]
-                class_permissions_element = ET.SubElement(root, "classAccesses")
-                ET.SubElement(class_permissions_element, "apexClass").text = f"{class_name}"
-                ET.SubElement(class_permissions_element, "enabled").text = "true"
 
-    # Traverse through the tab files
+
+    # TAB PERMISSIONS
+
+    # Handle Existing Access if any
+    if len(existing_entries["tabSettings"]) > 0:
+        for existing_ts_permission in existing_entries["tabSettings"]:
+            root.append(existing_ts_permission)
+
+    # Handle New or Additional Access
     tabs_path = "force-app/main/default/tabs"
     if os.path.exists(tabs_path):
-        for tab_file in os.listdir(tabs_path):
+        for tab_file in sorted(os.listdir(tabs_path)):
             if tab_file.endswith(".tab-meta.xml"):
                 tab_name = tab_file[:-13]
-                tab_permissions_element = ET.SubElement(root, "tabSettings")
-                ET.SubElement(tab_permissions_element, "tab").text = f"{tab_name}"
-                ET.SubElement(tab_permissions_element, "visibility").text = "Visible"
+                tab_permissions_element = find_existing_entry(existing_entries["tabSettings"], "tab", tab_name)
+                if tab_permissions_element is None:
+                    tab_permissions_element = ET.SubElement(root, "tabSettings")
+                    ET.SubElement(tab_permissions_element, "tab").text = tab_name
+                    ET.SubElement(tab_permissions_element, "visibility").text = "Visible"
 
-    # Traverse through the Application files
-    apps_path = "force-app/main/default/applications"
-    if os.path.exists(apps_path):
-        for apps_file in os.listdir(apps_path):
-            if apps_file.endswith(".app-meta.xml"):
-                app_name = apps_file[:-13]
-                app_permissions_element = ET.SubElement(root, "applicationVisibilities")
-                ET.SubElement(app_permissions_element, "application").text = f"{app_name}"
-                ET.SubElement(app_permissions_element, "visible").text = "true"
 
-    # Create the file
-    if not os.path.exists("force-app/main/default/permissionsets"):
-        os.makedirs("force-app/main/default/permissionsets")
 
-    file_path = f"force-app/main/default/permissionsets/{name}.permissionset-meta.xml"
-    with open(file_path, "w", encoding="utf-8") as file:
+    # USER PERMISSIONS
+
+    # Handle Existing Access if any
+    if len(existing_entries["userPermissions"]) > 0:
+        for existing_permission in existing_entries["userPermissions"]:
+            root.append(existing_permission)
+
+    # Handle New or Additional Access
+    # TODO - Unlikely we can find these within the project
+
+    # Create or update the Permission Set file directory
+    os.makedirs("force-app/main/default/permissionsets", exist_ok=True)
+
+    # Check if the xmlns attribute is already present
+    if "xmlns" not in root.attrib:
+        root.set("xmlns", "http://soap.sforce.com/2006/04/metadata")
+
+    with open(permissionset_path, "wb") as file:
         xml_string = ET.tostring(root, encoding="unicode")
+
+        # Clean Up XML String
+        # This is needed for updates as ET parses files weirdly and doesnt handle namespaces
+        xml_string = re.sub(r">\s+<", "><", xml_string)
+        xml_string = xml_string.replace('xmlns="http://soap.sforce.com/2006/04/metadata" xmlns="http://soap.sforce.com/2006/04/metadata"', 'xmlns="http://soap.sforce.com/2006/04/metadata"')
+
+        # Write Permission Set File
         xml_dom = minidom.parseString(xml_string)
-        formatted_xml = xml_dom.toprettyxml(indent="  ", encoding="utf-8")
-        file.write(formatted_xml.decode("utf-8"))
+        formatted_xml = xml_dom.toprettyxml(indent="    ", encoding="utf-8")
+        file.write(formatted_xml)
+
+def find_existing_entry(existing_entries, child_tag, child_text):
+    """
+    Find an existing entry by comparing child tag and text.
+
+    Args:
+
+        existing_entries (list): List of existing child elements.
+        child_tag (str): Child element tag name.
+        child_text (str): Child element text.
+
+    Returns:
+        element: Existing element if found, else None.
+    """
+
+    nsmap = {'': "http://soap.sforce.com/2006/04/metadata"}
+    for entry in existing_entries:
+        child_element = entry.find(f"{child_tag}", namespaces=nsmap)
+        if child_element is not None and child_element.text == child_text:
+            return entry
+    return None
 
 def get_packages_in_stack(skip_cache_rebuild=False, whole_stack=True):
 
@@ -1147,7 +1207,7 @@ def get_packages_in_stack(skip_cache_rebuild=False, whole_stack=True):
             if len(cci_yml) > 0:
                 with open(cci_yml[0], 'r') as f:
                     config = yaml.safe_load(f)
-                
+
                 dependencies = config['project'].get("dependencies")
                 if dependencies:
                     for d in dependencies:
@@ -1156,7 +1216,7 @@ def get_packages_in_stack(skip_cache_rebuild=False, whole_stack=True):
 
     with open('cumulusci.yml', 'r') as f:
         local_config = yaml.safe_load(f)
-            
+
         local_dependencies = local_config['project'].get("dependencies")
         if local_dependencies:
             for d in local_dependencies:
@@ -1330,26 +1390,26 @@ def generate_stack_view(parent_directory_path='.cci/projects', output="terminal"
         log_file.close()
 
 def remove_empty_translations():
-    
+
     """
     Removes empty translations from the project directory. Defaults to the force-app/main/default/objectTranslations directory.
     """
 
     # Define the path to the objectTranslations directory
     obj_trans_dir = os.path.join('force-app', 'main', 'default', 'objectTranslations')
-    
+
     # Loop through all subdirectories in the objectTranslations directory
     for obj_dir in os.listdir(obj_trans_dir):
         obj_dir_path = os.path.join(obj_trans_dir, obj_dir)
         if not os.path.isdir(obj_dir_path):
             continue
-        
+
         # Check if all label tags have no value
-        
+
         for trans_file in os.listdir(obj_dir_path):
             if not trans_file.endswith('.xml'):
                 continue
-            
+
             trans_file_path = os.path.join(obj_dir_path, trans_file)
             tree = ET.parse(trans_file_path)
             root = tree.getroot()
@@ -1358,14 +1418,14 @@ def remove_empty_translations():
                 if child.find('label') is not None and child.find('label').text != '':
                     has_translation = True
                     break
-            
+
             if not has_translation:
                 print(f"No translation found in {trans_file_path}")
                 os.remove(trans_file_path)
                 remove_obj_dir = True
             else:
                 remove_obj_dir = False
-        
+
         # Remove object directory if all files within have no translations
         if remove_obj_dir:
             os.rmdir(obj_dir_path)
@@ -1420,3 +1480,25 @@ def check_and_update_setting(xml_file, settings_name, setting_name, setting_valu
     xml_content = '<?xml version="1.0" encoding="UTF-8"?>\n' + ET.tostring(root, encoding="unicode")
     with open(xml_file, "w", encoding="utf-8") as file:
         file.write(xml_content)
+
+def convert_to_18_char(sf_id):
+
+    """Converts a 15 character salesforce ID to 18 Characters"""
+
+    if len(sf_id) == 18:
+        return sf_id
+    if len(sf_id) != 15:
+        raise ValueError("Salesforce ID must be either 15 or 18 characters in length.")
+
+    chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
+    def calculate_position(segment):
+        position = 0
+        for idx, char in enumerate(segment):
+            if 'A' <= char <= 'Z':
+                position += 2 ** idx
+        return chars[position]
+
+    suffix = ''.join(calculate_position(sf_id[i:i+5]) for i in range(0, 15, 5))
+
+    return sf_id + suffix

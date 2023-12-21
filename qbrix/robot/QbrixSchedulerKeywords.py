@@ -1,29 +1,22 @@
 from time import sleep
 
 from Browser import ElementState, SelectAttribute
-from cumulusci.robotframework.base_library import BaseLibrary
-from qbrix.robot.QbrixSharedKeywords import QbrixSharedKeywords
+from robot.api.deco import library
+
+from qbrix.core.qbrix_robot_base import QbrixRobotTask
 
 
-class QbrixSchedulerKeywords(BaseLibrary):
+@library(scope='GLOBAL', auto_keywords=True, doc_format='reST')
+class QbrixSchedulerKeywords(QbrixRobotTask):
 
-    def __init__(self):
-        super().__init__()
-        self._browser = None
-        self.shared = QbrixSharedKeywords()
-
-    @property
-    def browser(self):
-        if self._browser is None:
-            self._browser = self.builtin.get_library_instance("Browser")
-        return self._browser
+    """Keyword Library for Lightning Scheduler"""
 
     def enable_scheduler(self):
         """ Enables Salesforce Scheduler """
-        
+
         settings_page_url = "LightningSchedulerSettings/home"
         wait_for_title = "h2:has-text('Event Management')"
-        
+
         # Go To Scheduler Setup
         self.shared.go_to_setup_admin_page(settings_page_url)
         self.browser.wait_for_elements_state(wait_for_title, ElementState.visible, '30s')

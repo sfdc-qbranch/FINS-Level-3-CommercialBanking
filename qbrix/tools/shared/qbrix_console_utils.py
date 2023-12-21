@@ -1,58 +1,31 @@
 import logging
+import os
+import shlex
 import subprocess
 import sys
 import textwrap
-import shlex
 from abc import ABC
 
+from cumulusci.cli.logger import init_logger as cci_init_logger
 from cumulusci.tasks.command import Command
 
 
-class CustomFormatter(logging.Formatter):
-    """Logging colored formatter """
-
-    grey = '\x1b[38;21m'
-    blue = '\x1b[38;5;39m'
-    yellow = '\x1b[38;5;226m'
-    red = '\x1b[38;5;196m'
-    bold_red = '\x1b[31;1m'
-    reset = '\x1b[0m'
-
-    def __init__(self, fmt):
-        super().__init__()
-        self.fmt = fmt
-        self.FORMATS = {
-            logging.DEBUG: self.yellow + self.fmt + self.reset,
-            logging.INFO: self.blue + self.fmt + self.reset,
-            logging.WARNING: self.yellow + self.fmt + self.reset,
-            logging.ERROR: self.red + self.fmt + self.reset,
-            logging.CRITICAL: self.bold_red + self.fmt + self.reset
-        }
-
-    def format(self, record):
-        log_fmt = self.FORMATS.get(record.levelno)
-        formatter = logging.Formatter(log_fmt, "%Y-%m-%d %H:%M:%S")
-        return formatter.format(record)
-
-
 def init_logger():
-    """ Initiates the custom logger for Q Brix Extensions """
-    if not logging.getLogger(__name__).hasHandlers():
-        logger = logging.getLogger(__name__)
-        logger.setLevel(logging.DEBUG)
+    """
+    Initiates cumulusci logger for static methods
 
-        # Define format for logs
-        fmt = '%(asctime)s | %(levelname)8s | %(message)s'
+    Usage:
+        from qbrix.tools.shared.qbrix_console_utils import init_logger
 
-        # Create stdout handler for logging to the console (logs all five levels)
-        stdout_handler = logging.StreamHandler()
-        stdout_handler.setLevel(logging.DEBUG)
-        stdout_handler.setFormatter(CustomFormatter(fmt))
-        logger.addHandler(stdout_handler)
-        return logger
-    else:
-        logger = logging.getLogger(__name__)
-        return logger
+        def test_func():
+            logger = init_logger()
+            logger.info("hey")
+
+    """
+
+    cci_init_logger(False)
+    logger = logging.getLogger("cumulusci")
+    return logger
 
 
 class CreateBanner(Command, ABC):
@@ -61,7 +34,7 @@ class CreateBanner(Command, ABC):
     task_options = {
         "text": {
             "description": "Text you want to show in a banner. If you leave this blank it will show the current Q Brix details.",
-            "required": False
+            "required": False,
         }
     }
 
@@ -76,7 +49,7 @@ class CreateBanner(Command, ABC):
         self.width = None
         self.text_box = None
         self.max_width = None
-        self.border_char = '*'
+        self.border_char = "*"
         self.min_width = None
         self.env = self._get_env()
 
@@ -87,12 +60,13 @@ class CreateBanner(Command, ABC):
 
         output_string = self.border_char * self.width + "\n"
         for text_line in self.text_box:
-            output_string += self.border_char + " " + text_line + " " + self.border_char + "\n"
+            output_string += (
+                self.border_char + " " + text_line + " " + self.border_char + "\n"
+            )
         output_string += self.border_char * self.width
         return output_string
 
     def _generate_list(self):
-
         # if we are running in a headless runner- tty will not be there.
         if self.width == 0:
             return []
@@ -102,7 +76,9 @@ class CreateBanner(Command, ABC):
         paragraph_list = self.text.split("\n")
         text_list = []
         for paragraph in paragraph_list:
-            text_list += textwrap.fill(paragraph, box_width, replace_whitespace=False).split("\n")
+            text_list += textwrap.fill(
+                paragraph, box_width, replace_whitespace=False
+            ).split("\n")
         text_list = [line.ljust(box_width) for line in text_list]
         return text_list
 
@@ -115,47 +91,80 @@ class CreateBanner(Command, ABC):
 def get_terminal_width():
     # if we are running in a headless runner- tty will not be there.
     try:
-        return int(subprocess.check_output(['stty', 'size']).split()[1])
+        return int(subprocess.check_output(["stty", "size"]).split()[1])
     except Exception as e:
         print(e)
     return 0
 
 
-def run_command(command, cwd=None):
+def run_command(cmd: str, cwd=None, silent=False) -> int:
     """
     Runs a command as a subprocess and returns the result code
-    :param command: string command statement
-    :param cwd: (Optional) Current Working Directory override
-    :return: code (0 = success, 1 or above = error/failure)
+
+    Args:
+        command (str): string command statement
+        cwd (str): (Optional) Current Working Directory override
+
+    Returns:
+        (int) code (0 = success, 1 or above = error/failure)
     """
-
-    if not cwd:
-        cwd = "."
-
-    if not command:
-        print("No Command Passed. Returning.")
-        return None
-
-    print(f"Running Command: {command} in directory {cwd}\n")
 
     log = init_logger()
 
-    try:
-        with subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8', text=True) as proc:
-            errs = []
-            for line in proc.stdout:
-                if line:
-                    log.info(line)
-            for line in proc.stderr:
-                if line:
-                    errs.append(line)
-            stdout, _ = proc.communicate()
-        result = subprocess.CompletedProcess(command, proc.returncode, stdout, "\n".join(errs))
-    except subprocess.TimeoutExpired:
-        proc.kill()
-        log.error("Subprocess Timeout. Killing Process")
-    except Exception as e:
-        proc.kill()
-        log.error(f"Subprocess Failed. Error details: {e}")
+    # Check Command
+    if cmd:
+        # Blacklisted Command Keywords
+        blacklisted_keywords = {
+            "rm",
+            "shutdown",
+            "reboot",
+            "dd",
+            "mkfs",
+            "fdisk",  # Linux/Unix commands
+            "del",
+            "format",
+            "rmdir",
+            "rd",
+            "sfc",
+            "chkdsk",
+            "move",
+            "attrib",  # Windows commands
+            "mv",
+            "chmod",
+            "chown",
+            "sudo",
+            "kill",
+            "killall",
+            "iptables",  # More Linux/Unix commands
+        }
 
-    return result.returncode
+        # Check if any blacklisted keyword is in the command
+        if any(keyword in cmd.split() for keyword in blacklisted_keywords):
+            raise ValueError(f"Dangerous command detected: {cmd}")
+
+    else:
+        raise ValueError(
+            "No command was passed to the run_command function. Stopping script."
+        )
+
+    # Check Current Working Directory
+    if not cwd:
+        cwd = "."
+    cwd = os.path.normpath(cwd)
+
+    if not silent:
+        log.info("Running Command: [%s] in directory [%s]...", cmd, cwd)
+    try:
+        process_result = subprocess.check_call(cmd, shell=True, cwd=cwd)
+
+        if not silent:
+            log.info(f" -> Command [{cmd}] succeeded, returned: {str(process_result)}")
+    except subprocess.CalledProcessError as e:
+        if e.returncode == 1:
+            log.info(e)
+            return 0
+        sys.exit("'%s' failed, returned code %d" % (cmd, e.returncode))
+    except OSError as e:
+        sys.exit("failed to run shell: '%s'" % (str(e)))
+
+    return process_result

@@ -1,37 +1,58 @@
 import os
 import shutil
-import subprocess
-from abc import ABC
 
-from cumulusci.core.utils import import_global
-from cumulusci.core.exceptions import TaskOptionsError
-from cumulusci.core.tasks import CURRENT_TASK, BaseTask
 from cumulusci.cli.runtime import CliRuntime
+from cumulusci.core.exceptions import TaskOptionsError
+from cumulusci.core.tasks import CURRENT_TASK
+from cumulusci.core.utils import import_global
+
+from qbrix.tools.shared.qbrix_console_utils import init_logger
 
 
-def rebuild_cci_cache(cci_project_cache_directory: str = ".cci/projects") -> bool:
+def rebuild_cci_cache(
+    cci_project_cache_directory: str = None, rebuild_flow: str = None
+) -> bool:
     """
     Rebuilds the CCI projects Cache folder using the dev_org flow from CCI
 
     Args:
         cci_project_cache_directory (str): Relative File Path to the CCI Projects Directory
+        rebuild_flow (str): (Optional) Name of the flow from the Q Brix to use to get all relevant sources. Defaults to deploy_qbrix
 
     Returns:
         bool: True when complete
     """
+    logger = init_logger()
+
+    if not cci_project_cache_directory:
+        cci_project_cache_directory = os.path.normpath(".cci/projects")
 
     # Cleanup Current Directory
     if os.path.exists(cci_project_cache_directory):
         shutil.rmtree(cci_project_cache_directory)
 
-    # Run dev_org flow to capture all requirements
-    try:
-        subprocess.run(["cci", "flow", "info", "dev_org"])
-    except Exception as e:
-        raise Exception(f"Failed to rebuild CCI cache. Error Message: {e}")
+    # Get deploy_qbrix flow to rebuild cache
+    if not rebuild_flow:
+        rebuild_flow = "deploy_qbrix"
 
+    logger.info("Rebuilding Cache using flow called [%s]...", rebuild_flow)
+    CliRuntime().get_flow(rebuild_flow)
+    logger.info("Cache Rebuilt!")
     # Return True to confirm completion
     return True
+
+
+def _init_task(class_path, options, task_config, org_config=None):
+    task_class = import_global(class_path)
+    task_config = _parse_task_options(options, task_class, task_config)
+
+    if org_config:
+        task = task_class(
+            task_config.project_config, task_config, org_config=org_config
+        )
+    else:
+        task = task_class(task_config.project_config, task_config)
+    return task
 
 
 def _parse_task_options(options, task_class, task_config):
@@ -47,9 +68,7 @@ def _parse_task_options(options, task_class, task_config):
             # Validate the option
             if name not in task_class.task_options:
                 raise TaskOptionsError(
-                    'Option "{}" is not available for task {}'.format(
-                        name, task_class
-                    )
+                    'Option "{}" is not available for task {}'.format(name, task_class)
                 )
 
             # Override the option in the task config
@@ -77,33 +96,50 @@ def run_cci_task(task_name: str, org_name: str = None, **options) -> bool:
     run_cci_task('deploy', 'dev', path='force-app')
     """
 
+    _org = None
+    _project_config = None
+
+    logger = init_logger()
+
     if not org_name:
+        logger.debug("No Org name was provided. Defaulting to 'dev' alias.")
         org_name = "dev"
 
-    if getattr(CURRENT_TASK, "stack", None) and CURRENT_TASK.stack[0].project_config:
-        _project_config = CURRENT_TASK.stack[0].project_config
-    else:
-        _project_config = CliRuntime().project_config
-
-    if getattr(CURRENT_TASK, "stack", None) and CURRENT_TASK.stack[0].org_config:
-        _org = CURRENT_TASK.stack[0].org_config
-    else:
-        _org = CliRuntime().project_config.keychain.get_org(org_name)
-
-    task_config = CliRuntime().project_config.get_task(task_name)
-    task_class = import_global(task_config.class_path)
-    task_config = _parse_task_options(options, task_class, task_config)
-    task = task_class(
-        task_config.project_config or _project_config,
-        task_config,
-        org_config=_org,
+    logger.info(
+        "Running task with name [%s] against target org [%s]", task_name, org_name
     )
 
     try:
+        if (
+            getattr(CURRENT_TASK, "stack", None)
+            and CURRENT_TASK.stack[0].project_config
+        ):
+            _project_config = CURRENT_TASK.stack[0].project_config
+        else:
+            _project_config = CliRuntime().project_config
+
+        if getattr(CURRENT_TASK, "stack", None) and CURRENT_TASK.stack[0].org_config:
+            _org = CURRENT_TASK.stack[0].org_config
+        else:
+            _org = CliRuntime().project_config.keychain.get_org(org_name)
+
+        task_config = CliRuntime().project_config.get_task(task_name)
+        task_class = import_global(task_config.class_path)
+        task_config = _parse_task_options(options, task_class, task_config)
+        task = task_class(
+            task_config.project_config or _project_config,
+            task_config,
+            org_config=_org,
+        )
+
+        logger.info(" -> Task parameters generated. Running task...")
+
         _run_task(task)
+
+        logger.info(" -> Task Complete!")
         return True
     except Exception as e:
-        raise Exception(f"Task Runner Failed. {e}")
+        raise Exception(f"Task Runner Failed. Error details: {e}")
 
 
 def run_cci_flow(flow_name: str, org_name: str = None, **options) -> bool:
@@ -118,30 +154,33 @@ def run_cci_flow(flow_name: str, org_name: str = None, **options) -> bool:
         bool: True if the flow has executed without error
 
     Example Usage:
-    run_cci_flow('deploy_qbrix', 'dev')
+        run_cci_flow('deploy_qbrix', 'dev')
     """
 
+    logger = init_logger()
+
     if not org_name:
+        logger.debug("No Org name was provided. Defaulting to 'dev' alias.")
         org_name = "dev"
 
+    logger.info("Starting flow [%s] against target org [%s]", flow_name, org_name)
+
     org_config = CliRuntime().project_config.keychain.get_org(org_name)
+
+    if not org_config:
+        raise ValueError(
+            f"Unable to get target Salesforce org configuration for provided alias [{org_name}]"
+        )
+
     flow_coordinator = CliRuntime().get_flow(flow_name, options=options)
 
-    try:
-        flow_coordinator.run(org_config)
-        return True
-    except Exception as e:
-        raise Exception(f"Flow Runner Failed. {e}")
+    if not flow_coordinator:
+        raise ValueError(
+            f"Unable to get find a flow configuration for the name provided [{flow_name}]"
+        )
 
+    flow_coordinator.run(org_config)
 
-class TestRun(BaseTask, ABC):
-    # This has been added and left as a general test runner for testing only
-    task_options = {
-        "org": {
-            "description": "Org alias",
-            "required": False
-        },
-    }
+    logger.info("Flow completed!")
 
-    def _run_task(self):
-        pass
+    return True

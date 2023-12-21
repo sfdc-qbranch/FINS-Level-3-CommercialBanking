@@ -64,16 +64,16 @@ sources:
 
   base:
     github: https://github.com/sfdc-qbranch/QBrix-0-xDO-BaseConfig
-    
+
   # Knowledge:
   #   github: https://github.com/sfdc-qbranch/QBrix-1-xDO-Knowledge
-  
+
   FINS_Base:
     github: https://github.com/sfdc-qbranch/QBrix-1-FINS-Base #TODO: TEMPORARY FIX: Referenced here to remove an issue where FINS Banking Base is not downloading this FINS Base.
 
   FINS_Banking_Base:
     github: https://github.com/sfdc-qbranch/QBrix-1-FINS-Banking-Base
-  
+
   FINS_Banking_CRMA:
     github: https://github.com/sfdc-qbranch/QBrix-3-FINS-Banking-CRMA
 
@@ -115,6 +115,21 @@ tasks:
   # Q BRIX TASKS                       #
   #------------------------------------#
   # CUSTOM TASKS ADDED FOR Q BRIX DEVELOPMENT
+
+  qbrix_download_files:
+    class_path: qbrix.salesforce.qbrix_salesforce_tasks.DownloadFiles
+
+  experience_file_asset_manager:
+    class_path: qbrix.tools.utils.qbrix_experience_manager.ExperienceFileAssetManager
+
+  experience_manager:
+    class_path: qbrix.tools.utils.qbrix_experience_manager.ExperienceManager
+
+  qbrix_robot_test:
+    class_path: qbrix.tools.utils.qbrix_launch_test_robot.QRobotTestCapture
+
+  precommit_check:
+    class_path: qbrix.git.hooks_ext.pre_commit.PreCommit
 
   qbrix_shell_deploy_metadeploy:
     class_path: qbrix.tools.utils.qbrix_deploy.Deploy
@@ -267,7 +282,6 @@ flows:
       # 3:
       #   flow: Knowledge:deploy_qbrix
 
-
   #------------------------------------#
   # STAGE 2 of 3: Q BRIX DEPLOYMENT    #
   #------------------------------------#
@@ -290,7 +304,7 @@ flows:
         task: qbrix_installer_tracking
         options:
           explicitexit: True
-  
+
   # Deploys the q brix without banking base, should be called by lv5 qbrix
   deploy_qbrix_without_dependencies:
     steps:

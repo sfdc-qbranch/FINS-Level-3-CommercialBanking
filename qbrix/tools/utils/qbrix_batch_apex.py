@@ -1,17 +1,18 @@
-from genericpath import isfile
 import json
 import os
-import time
 import subprocess
-import requests
+import time
 from abc import abstractmethod
 
+import requests
 from cumulusci.core.config import ScratchOrgConfig
-from cumulusci.tasks.sfdx import SFDXBaseTask
 from cumulusci.core.exceptions import CommandException
 from cumulusci.core.keychain import BaseProjectKeychain
+from cumulusci.tasks.sfdx import SFDXBaseTask
+from genericpath import isfile
+from qbrix.tools.shared.qbrix_authentication import perform_needle_cast
 
-LOAD_COMMAND = "sfdx apex run "
+LOAD_COMMAND = "sf apex run "
 
 
 class BatchAnonymousApex(SFDXBaseTask):
@@ -29,6 +30,10 @@ class BatchAnonymousApex(SFDXBaseTask):
         },
         "org": {
             "description": "Value to replace every instance of the find value in the source file.",
+            "required": False
+        },
+        "runas": {
+            "description": "SOQL WHERE statement to identify a SINGLE user to run the anonymous apex scripts as.\n The generated SOQL will look like: SELECT Username FROM USER WHERE (YOUR CRITERIA) LIMIT 1",
             "required": False
         }
     }
@@ -105,16 +110,50 @@ class BatchAnonymousApex(SFDXBaseTask):
         else:
             self.filepaths = []
             self.logger.info("No File Paths provided")
+            
+            
+        # where clause for runas
+        if "runas" in self.options and not self.options["runas"] is None:
+
+            # cast to a dictionary
+            self.runas = self.options["runas"]
+        else:
+            self.runas = None
+            self.logger.info("No Run As Where clause provided")
 
     def _run_task(self):
 
         self._prepruntime(self)
         self._setprojectdefaults(self.instanceurl)
+        runasaccesstoken = self.accesstoken
 
         if hasattr(self, "filepaths") and self.filepaths is not None:
+            
+            if(not self.runas is None):
+                self.logger.info('Run As Filter Detected!')
+                runasusername =self._get_runas_username()
+                if(not runasusername is None):
+                    self.logger.info(f'Run As: Target User->{runasusername}')
+                    needlecastdata = perform_needle_cast(runasusername)
+                    if not needlecastdata is None:
+                        
+                        #self.logger.info(needlecastdata)                        
+                        runasaccesstoken = needlecastdata["accessToken"]
+                        runasinstanceurl = needlecastdata["instanceUrl"]
+                        runasusername = needlecastdata["details"]["userName"]
+                        injectcmd =f"export SFDX_ACCESS_TOKEN='{runasaccesstoken}' && sf org login access-token --instance-url  {runasinstanceurl}  -a {runasusername} --no-prompt --json"
+                        #self.logger.info(needlecastdata)
+                        resp = subprocess.run([injectcmd], shell=True, capture_output=True, cwd=self.options.get("dir"))
+                        #self.logger.info(resp.stdout)
+                        runasaccesstoken = runasusername
+                        
+                    else:
+                        self.logger.info(f'Run As: Unable to NeedleCase Target User->{runasusername}')
+                    
             for i, v in enumerate(self.filepaths):
                 if os.path.isfile(v):
-                    runthiscmd = f"{LOAD_COMMAND} -f {v} -u {self.accesstoken} --json"
+                    runthiscmd = f"{LOAD_COMMAND} -f {v} -o {runasaccesstoken} --json"
+                    #self.logger.info(runthiscmd)
                     self.logger.info(f'Running Apex Script in {v}')
                     resp = subprocess.run([runthiscmd], shell=True, capture_output=True, cwd=self.options.get("dir"))
                     self.logger.info(resp.stdout)
@@ -129,7 +168,28 @@ class BatchAnonymousApex(SFDXBaseTask):
             self.logger.error(message)
             raise CommandException(message)
         
+    def _get_runas_username(self):
         
+        if(self.runas is None):
+            return None
+        
+        try:
+            runasoql=f"select Username from User where ({self.runas}) LIMIT 1".replace(" ","+")
+            url = f"{self.instanceurl}/services/data/v56.0/query/?q={runasoql}"
+            headers = {
+                'Authorization': f'Bearer {self.accesstoken}',
+                'Content-Type': 'application/json'
+            }
+            response = requests.request("GET", url, headers=headers)
+            data = json.loads(response.text)
+            #self.logger.info(data)
+            return data["records"][0]["Username"]
+        except Exception as ex:
+            self.logger.error(ex)
+            
+        return None
+
+
 class RunAnonymousApexAndWait(SFDXBaseTask):
     keychain_class = BaseProjectKeychain
 
@@ -144,23 +204,23 @@ class RunAnonymousApexAndWait(SFDXBaseTask):
             "required": False
         }
         ,
-        "waitseconds": { 
+        "waitseconds": {
             "description": "Number of secondsd to wait per cycle. Default is 60",
             "required": False
         },
-        "exitonsoqlzero": { 
+        "exitonsoqlzero": {
             "description": "SOQL Count() to verify for exit. When the count result hits 0, it exits.",
             "required": False
         },
-        "maxwaithchecks": { 
+        "maxwaithchecks": {
             "description": "Max number of times to check to and wait after no detection of the running jobs. Each wait check is 60 seconds. Default of 1 if not set.",
             "required": False
         },
-         "runscriptperwait": { 
+         "runscriptperwait": {
             "description": "True or False to run an script per wait cycle",
             "required": False
         },
-         "waitscript": { 
+         "waitscript": {
             "description": "Script file to run per wait",
             "required": False
         }
@@ -234,33 +294,33 @@ class RunAnonymousApexAndWait(SFDXBaseTask):
             self.instanceurl = self.org_config.instance_url
         else:
             self.instanceurl = self.options["instanceurl"]
-        
+
         if "filepath" in self.options and not self.options["filepath"] is None:
             self.filepath = self.options["filepath"]
         else:
             self.filepath = None
             self.logger.info("No File Path provided")
-            
+
         if "maxwaithchecks" in self.options and not self.options["maxwaithchecks"] is None:
             self.maxwaithchecks = self.options["maxwaithchecks"]
         else:
             self.maxwaithchecks = 1
-            
+
         if "waitseconds" in self.options and not self.options["waitseconds"] is None:
             self.waitseconds = int(self.options["waitseconds"])
         else:
             self.waitseconds = 60
-            
+
         if "exitonsoqlzero" in self.options and not self.options["exitonsoqlzero"] is None:
             self.exitonsoqlzero = self.options["exitonsoqlzero"]
         else:
             self.exitonsoqlzero = None
-            
+
         if "runscriptperwait" in self.options and not self.options["runscriptperwait"] is None:
             self.runscriptperwait = bool(self.options["runscriptperwait"])
         else:
             self.runscriptperwait = False
-            
+
         if "waitscript" in self.options and not self.options["waitscript"] is None:
             self.waitscript = self.options["waitscript"]
         else:
@@ -272,34 +332,36 @@ class RunAnonymousApexAndWait(SFDXBaseTask):
         self._setprojectdefaults(self.instanceurl)
 
         if hasattr(self, "filepath") and self.filepath is not None:
-            
+
             if os.path.isfile(self.filepath):
                 runthiscmd = f"{LOAD_COMMAND} -f {self.filepath} -u {self.accesstoken} --json"
                 self.logger.info(f'Running Apex Script in {self.filepath}')
                 resp = subprocess.run([runthiscmd], shell=True, capture_output=True, cwd=self.options.get("dir"))
                 time.sleep(self.waitseconds)
-                if hasattr(self, "exitonsoqlzero") and self.exitonsoqlzero is not None:    
+                if hasattr(self, "exitonsoqlzero") and self.exitonsoqlzero is not None:
                     while(self.maxwaithchecks>0):
-    
+
                         if(self._is_zero_count(self.exitonsoqlzero)):
                             time.sleep(30)
                             if(self._is_zero_count(self.exitonsoqlzero)):
                                 self.maxwaithchecks=0
                                 continue
-                            
+
                         #if we want to run a scropt per wait
                         if(self.waitscript):
                             runthiscmd = f"{LOAD_COMMAND} -f {self.waitscript} -u {self.accesstoken} --json"
                             self.logger.info(f'Running Additional Wait Apex Script in {self.waitscript}')
                             resp = subprocess.run([runthiscmd], shell=True, capture_output=True, cwd=self.options.get("dir"))
-                            
+
                         self.maxwaithchecks=self.maxwaithchecks-1
                         time.sleep(self.waitseconds)
-                            
+
             else:
                 self.logger.error(f"File path {self.filepath} is not a valid file")
-                
-                
+
+
+    
+            
     def _is_zero_count(self,soql):
         modsoql=soql.replace(" ","+")
         url = f"{self.instanceurl}/services/data/v56.0/query/?q={modsoql}"
@@ -311,7 +373,7 @@ class RunAnonymousApexAndWait(SFDXBaseTask):
         data = json.loads(response.text)
         self.logger.info(data)
         return data["records"][0]["expr0"] == 0
-    
+
     def _handle_returncode(self, returncode, stderr):
         if returncode:
             message = "Return code: {}".format(returncode)

@@ -1,0 +1,59 @@
+{
+  "image": "ghcr.io/sfdc-qbranch/qbrix-base-container-quasar:latest",
+  "forwardPorts": [7788, 1717],
+  "portsAttributes": {
+    "7788": {
+      "label": "cci-auth-callback"
+    },
+    "1717": {
+      "label": "sfdx-web-auth"
+    }
+  },
+  "customizations": {
+    // Configure properties specific to Codespaces.
+    "codespaces": {
+      //give read access to qbrix that might be dynamically loaded and need out of band access 
+      "repositories": {
+        "sfdc-qbranch/QBrix-1-xDO-Tool-QBrixRegister": {
+          "permissions": "read-all"
+        },
+        "sfdc-qbranch/QBrix-2-xDO-Tool-OrgIdentifier": {
+          "permissions": "read-all"
+        },
+        "sfdc-qbranch/QBrix-2-xDO-Tool-demoappTrack": {
+          "permissions": "read-all"
+        },
+        "sfdc-qbranch/QBrix-2-xDO-Tool-UtilityLookup": {
+          "permissions": "read-all"
+        },
+        "sfdc-qbranch/QBrix-2-xDO-Tool-Spotter": {
+          "permissions": "read-all"
+        },
+        "sfdc-qbranch/QBrix-3-SDO-Platform-Components": {
+          "permissions": "read-all"
+        },
+        "sfdc-qbranch/QBrix-2-xDO-Tool-Mixpanel": {
+          "permissions": "read-all"
+        }
+      }
+
+    },
+    // Configure properties specific to VS Code.
+    "vscode": {
+      // Set *default* container specific settings.json values on container create.
+      "settings": {
+        "salesforcedx-vscode-apex.java.home": "/usr/lib/jvm/java-11-openjdk-amd64"
+      },
+
+      // Add the IDs of extensions you want installed when the container is created.
+      "extensions": [
+        "salesforce.salesforcedx-vscode",
+        "redhat.vscode-xml",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode"
+      ]
+    }
+  },
+  "features": {},
+  "postStartCommand": "qx setup init-codespace"
+}
